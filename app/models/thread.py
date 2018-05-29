@@ -76,5 +76,11 @@ class Thread(db.Model):
                 category_id=params['category_id']
             )
             session.add(data)
+            session.flush()
+
+            from .comment import create_db
+
+            # コメントテーブルを動的に作成する
+            create_db(data.thread_id)
 
             return row_to_dict(data)

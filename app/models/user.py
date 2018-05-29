@@ -1,4 +1,5 @@
 from app.database import db
+from app.models import row_to_dict, session_scope
 
 
 class User(db.Model):
@@ -16,15 +17,40 @@ class User(db.Model):
     profile = db.Column(db.String(length=256), nullable=True)
     twitter_name = db.Column(db.String(length=256), nullable=True)
 
-    def get():
-        rows = db.session.query(
-            User.user_id,
-            User.email,
-            User.nick_name,
-            User.profile,
-            User.twitter_name
-        ).all()
+    @classmethod
+    def get(cls, user_id):
+        '''user_idに紐づくuser情報取得
+        Args:
+            user_id: ユーザID
+        Returns:
+            dict: user情報
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.user_id == user_id
+            ).first()
 
-        result = [row._asdict() for row in rows]
+            return rows._asdict()
 
-        return result
+    @classmethod
+    def get_all(cls):
+        '''すべてのuser情報取得
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).all()
+
+            result = [row._asdict() for row in rows]
+
+            return result

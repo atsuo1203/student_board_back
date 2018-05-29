@@ -1,7 +1,6 @@
+from .category import Category
 from app.database import db
 from app.models import row_to_dict, session_scope
-
-from .category import Category
 
 
 class Thread(db.Model):
@@ -13,7 +12,7 @@ class Thread(db.Model):
         nullable=False,
         autoincrement=True
     )
-    name = db.Column(db.String(length=256), nullable=False)
+    title = db.Column(db.String(length=256), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     category_id = db.Column(
         db.Integer,
@@ -32,7 +31,7 @@ class Thread(db.Model):
         with session_scope() as session:
             rows = session.query(
                 cls.thread_id,
-                cls.name,
+                cls.title,
                 cls.date
             ).join(
                 Category, Thread.category_id == Category.category_id
@@ -49,17 +48,14 @@ class Thread(db.Model):
         '''threadを作成
         Args:
             params (dict):
-                name: スレッドタイトル
+                title: スレッドタイトル
                 category_id: カテゴリID
         Returns:
             dict: 作成されたthread情報
         '''
         with session_scope() as session:
-            result = session.query(cls).all()
-            print(result)
-
             data = cls(
-                name=params['name'],
+                title=params['title'],
                 category_id=params['category_id']
             )
             session.add(data)

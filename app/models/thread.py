@@ -1,5 +1,5 @@
 from app.database import db
-from app.models import row_to_dict
+from app.models import row_to_dict, session_scope
 
 from .category import Category
 
@@ -34,5 +34,27 @@ class Thread(db.Model):
 
 
         result = [row._asdict() for row in rows]
+    @classmethod
+    def post(cls, params):
+        '''threadを作成
+        Args:
+            params (dict):
+                name: スレッドタイトル
+                category_id: カテゴリID
+        Returns:
+            dict: 作成されたthread情報
+        '''
+        with session_scope() as session:
+            result = session.query(cls).all()
+            print(result)
+
+            data = cls(
+                name=params['name'],
+                category_id=params['category_id']
+            )
+            session.add(data)
+            session.flush()
+
+            result = row_to_dict(data)
 
         return result

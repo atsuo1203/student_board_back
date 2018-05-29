@@ -7,7 +7,7 @@ app = Blueprint('user', __name__)
 
 
 @app.route('/user', methods=['GET'])
-def get_user():
+def get():
     result = User.get()
 
     return jsonify(result)

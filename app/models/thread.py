@@ -46,6 +46,21 @@ class Thread(db.Model):
             return result
 
     @classmethod
+    def get(cls, thread_id):
+        '''thread_idからthread情報取得
+        Args:
+            thread_id: スレッドID
+        Returns:
+            dict: thread情報
+        '''
+        with session_scope() as session:
+            rows = session.query(cls).filter(
+                cls.thread_id == thread_id
+            ).first()
+
+            return row_to_dict(rows)
+
+    @classmethod
     def post(cls, params):
         '''threadを作成
         Args:
@@ -61,8 +76,5 @@ class Thread(db.Model):
                 category_id=params['category_id']
             )
             session.add(data)
-            session.flush()
 
-            result = row_to_dict(data)
-
-        return result
+            return row_to_dict(data)

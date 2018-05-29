@@ -14,8 +14,14 @@ def get_threads(category_id):
     return jsonify(result)
 
 
+@app.route('/thread/<thread_id>', methods=['GET'])
+def get(thread_id):
+    result = Thread.get(thread_id)
+
+    return jsonify(result)
+
 @app.route('/thread', methods=['POST'])
-def post_thread():
+def post():
     params = parse_params(request.form)
 
     result = Thread.post(params)

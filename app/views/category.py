@@ -7,7 +7,7 @@ app = Blueprint('category', __name__)
 
 
 @app.route('/category', methods=['GET'])
-def get_category():
+def get():
     result = Category.get()
 
     return jsonify(result)

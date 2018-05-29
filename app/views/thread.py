@@ -1,13 +1,23 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 from app.models.thread import Thread
+from app.views.utils import parse_params
 
 
 app = Blueprint('thread', __name__)
 
 
-@app.route('/threads', methods=['GET'])
-def get_threads():
-    result = Thread.get_threads()
+@app.route('/threads/<category_id>', methods=['GET'])
+def get_threads(category_id):
+    result = Thread.get_threads(category_id)
+
+    return jsonify(result)
+
+
+@app.route('/thread', methods=['POST'])
+def post_thread():
+    params = parse_params(request.form)
+
+    result = Thread.post(params)
 
     return jsonify(result)

@@ -14,6 +14,8 @@ class Thread(db.Model):
     )
     title = db.Column(db.String(length=256), nullable=False)
     date = db.Column(db.Date(), nullable=False)
+    speed = db.Column(db.Integer, nullable=True)
+    comment_count = db.Column(db.Integer, nullable=True)
     category_id = db.Column(
         db.Integer,
         db.ForeignKey(Category.category_id),

@@ -21,19 +21,29 @@ class Thread(db.Model):
         nullable=False,
     )
 
-    def get_threads():
-        rows = db.session.query(
-            Thread.thread_id,
-            Thread.name,
-            Thread.date,
-            Category.category_id,
-            Category.name
-        ).join(
-            Category, Thread.thread_id == Category.category_id
-        ).all()
+    @classmethod
+    def get_threads(cls, category_id):
+        '''category_idに紐づけられたthreadリストの取得
+        Args:
+            category_id: カテゴリID
+        Returns:
+            list(dict): threads情報(dict)のリスト
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.thread_id,
+                cls.name,
+                cls.date
+            ).join(
+                Category, Thread.category_id == Category.category_id
+            ).filter(
+                Category.category_id == category_id
+            ).all()
 
+            result = [row._asdict() for row in rows]
 
-        result = [row._asdict() for row in rows]
+            return result
+
     @classmethod
     def post(cls, params):
         '''threadを作成

@@ -103,7 +103,7 @@ class Thread(db.Model):
         with session_scope() as session:
             data = cls(
                 title=params['title'],
-                category_id=params['category_id']
+                category_id=int(params['category_id'])
             )
             session.add(data)
             session.flush()

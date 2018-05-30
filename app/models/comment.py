@@ -1,9 +1,10 @@
-from app.database import db
+from datetime import datetime
 from sqlalchemy import create_engine
 
 from .thread import Thread
 from .user import User
 from app.config import Config
+from app.database import db
 
 
 class Comment(db.Model):
@@ -17,7 +18,7 @@ class Comment(db.Model):
     )
     name = db.Column(db.String(length=256), nullable=False)
     text = db.Column(db.String(length=256), nullable=False)
-    date = db.Column(db.Date(), nullable=False)
+    date = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     thread_id = db.Column(
         db.Integer,
         db.ForeignKey(Thread.thread_id),

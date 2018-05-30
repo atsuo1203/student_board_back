@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, make_response, request
 
 from app.models.thread import Thread
 from app.views.utils import parse_params
@@ -27,3 +27,11 @@ def post():
     result = Thread.post(params)
 
     return jsonify(result)
+
+@app.route('/thread', methods=['DELETE'])
+def delete():
+    params = parse_params(request.form)
+
+    Thread.delete(params)
+
+    return make_response('', 200)

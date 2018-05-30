@@ -114,3 +114,15 @@ class Thread(db.Model):
             create_db(data.thread_id)
 
             return row_to_dict(data)
+
+    @classmethod
+    def delete(cls, params):
+        '''threadを削除
+        Args:
+            params (dict):
+                thread_id: スレッドID
+        '''
+        with session_scope() as session:
+            rows = session.query(cls).filter_by(thread_id=params['thread_id'])
+            for row in rows:
+                session.delete(row)

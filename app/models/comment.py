@@ -18,7 +18,7 @@ class Comment(db.Model):
     )
     name = db.Column(db.String(length=256), nullable=False)
     text = db.Column(db.String(length=256), nullable=False)
-    date = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime(), nullable=False, default=datetime.now())
     thread_id = db.Column(
         db.Integer,
         db.ForeignKey(Thread.thread_id),

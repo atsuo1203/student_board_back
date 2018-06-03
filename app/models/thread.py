@@ -26,7 +26,7 @@ class Thread(db.Model):
         autoincrement=True
     )
     title = db.Column(db.String(length=256), nullable=False)
-    date = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime(), nullable=False, default=datetime.now())
     speed = db.Column(db.Integer, nullable=True)
     comment_count = db.Column(db.Integer, nullable=True)
     category_id = db.Column(

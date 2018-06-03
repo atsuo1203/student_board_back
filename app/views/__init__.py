@@ -3,6 +3,7 @@ from . import (
     thread,
     category,
     university,
+    auth,
 )
 
 
@@ -11,6 +12,7 @@ blueprints = [
     thread.app,
     category.app,
     university.app,
+    auth.app,
 ]
 
 

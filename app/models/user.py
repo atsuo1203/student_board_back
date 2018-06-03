@@ -39,6 +39,35 @@ class User(db.Model):
             return rows._asdict()
 
     @classmethod
+    def login(cls, email, password):
+        '''emailとpasswordからuser情報取得
+        Args:
+            email:      メール
+            password:   パスワード
+        Returns:
+            dict: user情報
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.email == email,
+                cls.password == password
+            ).order_by(
+                cls.user_id.desc()
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+
+    @classmethod
     def get_all(cls):
         '''すべてのuser情報取得
         '''

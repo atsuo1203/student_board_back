@@ -39,6 +39,35 @@ class User(db.Model):
             return rows._asdict()
 
     @classmethod
+    def login(cls, email, password):
+        '''emailとpasswordからuser情報取得
+        Args:
+            email:      メール
+            password:   パスワード
+        Returns:
+            dict: user情報
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.email == email,
+                cls.password == password
+            ).order_by(
+                cls.user_id.desc()
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+
+    @classmethod
     def get_all(cls):
         '''すべてのuser情報取得
         '''
@@ -52,5 +81,51 @@ class User(db.Model):
             ).all()
 
             result = [row._asdict() for row in rows]
+
+            return result
+
+    @classmethod
+    def is_exist(cls, email):
+        '''同じ学番メールのユーザが存在するかどうか
+        Args:
+            email:      学番メール
+        Returns:
+            bool:
+        '''
+        with session_scope() as session:
+            count = session.query(
+                cls
+            ).filter(
+                cls.email == email
+            ).count()
+
+            if count > 0:
+                return True
+            else:
+                return False
+
+    @classmethod
+    def post(cls, email, password):
+        '''user登録
+        Args:
+            email:      学番メール
+            password:   パスワード
+        Returns:
+            dict: user情報
+                user_id:    ユーザID
+                email:      学番メール
+        '''
+        with session_scope() as session:
+            data = cls(
+                email=email,
+                password=password
+            )
+            session.add(data)
+            session.flush()
+
+            result = {
+                'user_id': data.user_id,
+                'email': data.email,
+            }
 
             return result

@@ -32,6 +32,7 @@ class Comment(db.Model):
 
 
 def create_db(pid):
+def create_db(thread_id):
     '''コメントテーブルを動的に作成する
     テーブル名は，comment + thread_id
     '''
@@ -40,5 +41,5 @@ def create_db(pid):
     )
 
     comment_table = Comment.__table__
-    comment_table.name = 'comment' + str(pid)
+    comment_table.name = 'comment' + str(thread_id)
     comment_table.create(engine)

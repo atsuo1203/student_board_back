@@ -7,7 +7,7 @@ from app.models.provisional_user import ProvisionalUser
 from app.models.user import User
 from app.views.utils import parse_params
 from app.views.utils.mail import send_confirm_mail
-from app.views.utils.auth import generate_token, decode_token
+from app.views.utils.auth import generate_token
 
 
 app = Blueprint('auth', __name__)
@@ -45,33 +45,6 @@ def login():
         }
 
         return make_response(jsonify(result), 200)
-    except Exception as e:
-        print(e)
-        return make_response('', 500)
-
-
-@app.route('/auth/check_token', methods=['POST'])
-def check_token():
-    '''アクセストークンのチェック
-    Args:
-        access_token:  アクセストークン
-    Returns:
-        200:    有効なトークン
-        400:    トークンの有効期限が切れている
-        500:    サーバエラー
-    '''
-    params = parse_params(request.form)
-
-    try:
-        access_token = params['access_token']
-
-        d_token = decode_token(access_token)
-
-        # アクセストークンの有効期限が切れていた場合，400を返す
-        if d_token['expire'] < time.time():
-            return make_response('', 400)
-
-        return make_response('', 200)
     except Exception as e:
         print(e)
         return make_response('', 500)

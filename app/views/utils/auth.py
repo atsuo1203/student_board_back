@@ -1,14 +1,28 @@
 import time
 import jwt
 
-from app.config import SECRET_KEY, ALGORITHM
+from app.config import ALGORITHM, SECRET_KEY, LOGIN_EXPIRE_TIME
+
+
+def check_and_decode_webtoken(token):
+    try:
+        d_token = decode_token(token)
+
+        # アクセストークンの有効期限が切れていた場合，400を返す
+        if d_token['expire'] < time.time():
+            return None
+
+        return d_token
+    except:
+        raise Exception('failed decode token')
+
 
 
 def generate_token(user_id, email):
     token_data = {
         'user_id': user_id,
         'email': email,
-        'expire': time.time() + 3600    # 1時間
+        'expire': time.time() + LOGIN_EXPIRE_TIME
     }
 
     token = _jwt_encode(

@@ -26,7 +26,8 @@ class Thread(db.Model):
         autoincrement=True
     )
     title = db.Column(db.String(length=256), nullable=False)
-    date = db.Column(db.DateTime(), nullable=False, default=datetime.now())
+    create_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
+    update_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
     speed = db.Column(db.Integer, nullable=True)
     comment_count = db.Column(db.Integer, nullable=True)
     category_id = db.Column(
@@ -39,16 +40,14 @@ class Thread(db.Model):
     def all(cls, category_id):
         with session_scope() as session:
             rows = session.query(
-                cls.thread_id,
-                cls.title,
-                cls.date
+                cls
             ).join(
                 Category, Thread.category_id == Category.category_id
             ).filter(
                 Category.category_id == category_id
             ).all()
 
-            result = [row._asdict() for row in rows]
+            result = [row_to_dict(row) for row in rows]
 
             return result
 

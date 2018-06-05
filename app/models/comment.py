@@ -63,6 +63,8 @@ class Comment(db.Model):
             )
             session.add(data)
 
+            Thread.add_comment_count(session, thread_id)
+
             return
 
 

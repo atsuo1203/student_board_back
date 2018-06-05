@@ -28,8 +28,8 @@ class Thread(db.Model):
     title = db.Column(db.String(length=256), nullable=False)
     create_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
     update_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
-    speed = db.Column(db.Integer, nullable=True)
-    comment_count = db.Column(db.Integer, nullable=True)
+    speed = db.Column(db.Integer, nullable=True, default=0)
+    comment_count = db.Column(db.Integer, nullable=True, default=0)
     category_id = db.Column(
         db.Integer,
         db.ForeignKey(Category.category_id),
@@ -98,3 +98,14 @@ class Thread(db.Model):
             rows = session.query(cls).filter_by(thread_id=params['thread_id'])
             for row in rows:
                 session.delete(row)
+
+    @classmethod
+    def add_comment_count(cls, session, thread_id):
+        data = cls(
+            thread_id=thread_id,
+            comment_count=(cls.comment_count + 1)
+        )
+
+        session.merge(data)
+
+        return

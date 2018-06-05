@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, make_response, request
 
+from app.models.comment import Comment
 from app.models.thread import Thread
 from app.views.utils import parse_params
 
@@ -51,6 +52,32 @@ def post():
     result = Thread.post(params)
 
     return jsonify(result)
+
+
+@app.route('/thread/comment/<thread_id>', methods=['POST'])
+def post_comment(thread_id):
+    '''thread_idに紐づくcommentテーブルにcomment投稿
+    Args:
+        name:       名前
+        text:       コメントテキスト
+        user_id:    ユーザID
+    Returns:
+        dict:
+            作成されたthread情報
+    '''
+    params = parse_params(request.form)
+
+    try:
+        # thread_idに紐づくcommentテーブルにcomment追加
+        Comment.post(thread_id, params)
+
+        # comment追加後，thread_idに紐づくthread情報を取得
+        result = Thread.get(thread_id)
+
+        return make_response(jsonify(result), 201)
+    except Exception as e:
+        print("\nError:", e)
+        return make_response('', 500)
 
 
 @app.route('/thread', methods=['DELETE'])

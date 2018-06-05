@@ -19,12 +19,6 @@ class User(db.Model):
 
     @classmethod
     def get(cls, user_id):
-        '''user_idに紐づくuser情報取得
-        Args:
-            user_id: ユーザID
-        Returns:
-            dict: user情報
-        '''
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,
@@ -39,10 +33,25 @@ class User(db.Model):
             return rows._asdict()
 
     @classmethod
+    def all(cls):
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).all()
+
+            result = [row._asdict() for row in rows]
+
+            return result
+
+    @classmethod
     def login(cls, email, password):
-        '''emailとpasswordからuser情報取得
+        '''emailとpasswordが一致するuser情報を取得
         Args:
-            email:      メール
+            email:      学番メール
             password:   パスワード
         Returns:
             dict: user情報
@@ -66,27 +75,9 @@ class User(db.Model):
 
             return rows._asdict()
 
-
-    @classmethod
-    def get_all(cls):
-        '''すべてのuser情報取得
-        '''
-        with session_scope() as session:
-            rows = session.query(
-                cls.user_id,
-                cls.email,
-                cls.nick_name,
-                cls.profile,
-                cls.twitter_name
-            ).all()
-
-            result = [row._asdict() for row in rows]
-
-            return result
-
     @classmethod
     def is_exist(cls, email):
-        '''同じ学番メールのユーザが存在するかどうか
+        '''同じ学番メールのユーザが存在するかどうかをboolで返却
         Args:
             email:      学番メール
         Returns:
@@ -129,3 +120,14 @@ class User(db.Model):
             }
 
             return result
+
+    @classmethod
+    def put(cls, params):
+        with session_scope() as session:
+            # data = cls(
+            #     **params
+            # )
+
+            # session.merge(data)
+
+            return {'returnValue': 'ok'}

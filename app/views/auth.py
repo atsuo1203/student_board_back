@@ -88,8 +88,8 @@ def register_prov_user():
 def register():
     '''ユーザの本登録を行う
     Args:
-        email:  学番メール
-        token:  仮登録のトークン
+        email:      学番メール
+        token:      仮登録のトークン
         password:   パスワード
     Returns:
         200:    正常登録

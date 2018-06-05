@@ -36,13 +36,7 @@ class Thread(db.Model):
     )
 
     @classmethod
-    def get_threads(cls, category_id):
-        '''category_idに紐づけられたthreadリストの取得
-        Args:
-            category_id: カテゴリID
-        Returns:
-            list(dict): threads情報(dict)のリスト
-        '''
+    def all(cls, category_id):
         with session_scope() as session:
             rows = session.query(
                 cls.thread_id,
@@ -60,14 +54,6 @@ class Thread(db.Model):
 
     @classmethod
     def get(cls, thread_id):
-        '''thread_idからthread情報取得
-        Args:
-            thread_id: スレッドID
-        Returns:
-            dict:
-                thread: thread情報
-                comments: list(dict) comment情報のリスト
-        '''
         with session_scope() as session:
             # thread情報取得
             thread_rows = session.query(cls).filter(
@@ -92,14 +78,6 @@ class Thread(db.Model):
 
     @classmethod
     def post(cls, params):
-        '''threadを作成
-        Args:
-            params (dict):
-                title: スレッドタイトル
-                category_id: カテゴリID
-        Returns:
-            dict: 作成されたthread情報
-        '''
         with session_scope() as session:
             data = cls(
                 title=params['title'],
@@ -117,11 +95,6 @@ class Thread(db.Model):
 
     @classmethod
     def delete(cls, params):
-        '''threadを削除
-        Args:
-            params (dict):
-                thread_id: スレッドID
-        '''
         with session_scope() as session:
             rows = session.query(cls).filter_by(thread_id=params['thread_id'])
             for row in rows:

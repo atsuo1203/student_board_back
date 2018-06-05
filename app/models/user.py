@@ -122,12 +122,18 @@ class User(db.Model):
             return result
 
     @classmethod
-    def put(cls, params):
+    def put(cls, user_id, params):
         with session_scope() as session:
-            # data = cls(
-            #     **params
-            # )
+            data = cls(
+                user_id=user_id,
+                **params
+            )
 
-            # session.merge(data)
+            # mergeして1回commit
+            session.merge(data)
+            session.commit()
 
-            return {'returnValue': 'ok'}
+            # commit後の更新されたuser情報取得
+            user = cls.get(user_id)
+
+            return user

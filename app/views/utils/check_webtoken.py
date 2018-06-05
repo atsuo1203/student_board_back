@@ -8,7 +8,7 @@ from app.views.utils.auth import check_and_decode_webtoken
 def check_webtoken(func=None, extra_token=False):
     '''
     MEMO:
-        tokenをデコードしたtoken_dataを使う場合，以下の引数を追加する
+        webtokenをデコードしたtoken_dataを使う場合，以下の引数を追加する
 
         @check_webtoken(extra_token=True)
         def get(id, token_data):

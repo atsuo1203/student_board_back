@@ -15,7 +15,7 @@ class ProvisionalUser(db.Model):
         autoincrement=True
     )
     email = db.Column(db.String(length=256), nullable=False)
-    token = db.Column(db.String(length=256), nullable=False)
+    login_token = db.Column(db.String(length=256), nullable=False)
     create_at = db.Column(db.DateTime(), nullable=False)
 
     @classmethod
@@ -45,17 +45,17 @@ class ProvisionalUser(db.Model):
         Args:
             email:  学番メール
         Returns:
-            token:  トークン
+            login_token:  ログイントークン
         '''
         with session_scope() as session:
             # 推測しにくい一時URLトークン生成
-            token = secrets.token_urlsafe()
+            login_token = secrets.token_urlsafe()
 
             data = cls(
                 email=email,
-                token=token,
+                login_token=login_token,
                 create_at=datetime.now()
             )
             session.add(data)
 
-            return token
+            return login_token

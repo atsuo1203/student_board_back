@@ -38,10 +38,10 @@ def login():
             return make_response('', 400)
 
         # アクセストークン発行
-        access_token = generate_token(user['user_id'], email)
+        web_token = generate_token(user['user_id'], email)
 
         result = {
-            'access_token': access_token
+            'web_token': web_token
         }
 
         return make_response(jsonify(result), 200)
@@ -68,14 +68,14 @@ def register_prov_user():
         # 仮登録を行う
         # トークンを返却
         # TODO 仮登録を連続で登録できないようにinterva_timeを設定する
-        token = ProvisionalUser.post(email)
+        login_token = ProvisionalUser.post(email)
 
         # 確認メール送信
         send_confirm_mail(
             from_addr=FROM_ADDRESS,
             from_addr_pass=FROM_ADDRESS_PASS,
             to_addr=email,
-            token=token
+            login_token=login_token
         )
 
         return make_response('', 200)
@@ -88,9 +88,9 @@ def register_prov_user():
 def register():
     '''ユーザの本登録を行う
     Args:
-        email:      学番メール
-        token:      仮登録のトークン
-        password:   パスワード
+        email:          学番メール
+        login_token:    仮登録のトークン
+        password:       パスワード
     Returns:
         200:    正常登録
         400:    仮登録ユーザが存在しない，トークンの有効期限切れ，トークンの不一致
@@ -101,7 +101,7 @@ def register():
         params = parse_params(request.form)
 
         email = params['email']
-        token = params['token']
+        login_token = params['login_token']
         password = params['password']
 
         # ユーザがすでに本登録されているか
@@ -133,7 +133,7 @@ def register():
             return make_response(jsonify(result), 400)
 
         # トークンが不一致の場合，400を返却
-        if token != prov_user['token']:
+        if login_token != prov_user['login_token']:
             result = {
                 'error_message': '有効期限切れです'
             }

@@ -1,11 +1,10 @@
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.models.category import Category
 from app.config import Config
-from app.database import db
-from app.models import row_to_dict, session_scope
+from app.models import Base, row_to_dict, session_scope
 
 
 engine = create_engine(
@@ -16,23 +15,23 @@ engine = create_engine(
 base = declarative_base(engine)
 
 
-class Thread(db.Model):
+class Thread(Base):
     __tablename__ = 'thread'
 
-    thread_id = db.Column(
-        db.Integer,
+    thread_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    title = db.Column(db.String(length=256), nullable=False)
-    create_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
-    update_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
-    speed = db.Column(db.Integer, nullable=True, default=0)
-    comment_count = db.Column(db.Integer, nullable=True, default=0)
-    category_id = db.Column(
-        db.Integer,
-        db.ForeignKey(Category.category_id),
+    title = Column(String(length=256), nullable=False)
+    create_at = Column(DateTime, nullable=False, default=datetime.now())
+    update_at = Column(DateTime, nullable=False, default=datetime.now())
+    speed = Column(Integer, nullable=True, default=0)
+    comment_count = Column(Integer, nullable=True, default=0)
+    category_id = Column(
+        Integer,
+        ForeignKey(Category.category_id),
         nullable=False,
     )
 
@@ -105,7 +104,7 @@ class Thread(db.Model):
                 session.delete(row)
 
             # thread_idに紐づくcommentテーブルの削除
-            Comment.delete(hread_id)
+            Comment.delete(thread_id)
 
     @classmethod
     def add_comment_count(cls, session, thread_id):

@@ -1,12 +1,14 @@
 from datetime import datetime
-from sqlalchemy import create_engine
+
+from app.config import Config
+from app.models import Base, session_scope
+from sqlalchemy import (
+    Column, DateTime, ForeignKey, Integer, String, create_engine
+)
 from sqlalchemy.ext.declarative import declarative_base
 
-from .thread import Thread
-from .user import User
-from app.config import Config
-from app.database import db
-from app.models import session_scope
+from app.models.thread import Thread
+from app.models.user import User
 
 
 engine = create_engine(
@@ -17,26 +19,26 @@ engine = create_engine(
 base = declarative_base(engine)
 
 
-class Comment(db.Model):
+class Comment(Base):
     __tablename__ = 'comment'
 
-    comment_id = db.Column(
-        db.Integer,
+    comment_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    name = db.Column(db.String(length=256), nullable=False)
-    text = db.Column(db.String(length=256), nullable=False)
-    create_at = db.Column(db.DateTime(), nullable=False, default=datetime.now())
-    thread_id = db.Column(
-        db.Integer,
-        db.ForeignKey(Thread.thread_id),
+    name = Column(String(length=256), nullable=False)
+    text = Column(String(length=256), nullable=False)
+    create_at = Column(DateTime, nullable=False, default=datetime.now())
+    thread_id = Column(
+        Integer,
+        ForeignKey(Thread.thread_id),
         nullable=False,
     )
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey(User.user_id),
+    user_id = Column(
+        Integer,
+        ForeignKey(User.user_id),
         nullable=False,
     )
 

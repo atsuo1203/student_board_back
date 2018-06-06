@@ -1,8 +1,12 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from app.config import Config
+
+
+Base = declarative_base()
 
 
 def row_to_dict(row):

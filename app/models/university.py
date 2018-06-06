@@ -1,18 +1,19 @@
-from app.database import db
-from app.models import row_to_dict, session_scope
+from sqlalchemy import Column, Integer, String
+
+from app.models import Base, row_to_dict, session_scope
 
 
-class University(db.Model):
+class University(Base):
     __tablename__ = 'university'
 
-    university_id = db.Column(
-        db.Integer,
+    university_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    name = db.Column(db.String(length=256), nullable=False)
-    domain = db.Column(db.String(length=256), nullable=False)
+    name = Column(String(length=256), nullable=False)
+    domain = Column(String(length=256), nullable=False)
 
     @classmethod
     def all(cls):

@@ -1,22 +1,23 @@
-from app.database import db
-from app.models import row_to_dict
+from app.models import Base, row_to_dict, session_scope
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
 
 
-class Category(db.Model):
+class Category(Base):
     __tablename__ = 'category'
 
-    category_id = db.Column(
-        db.Integer,
+    category_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    name = db.Column(db.String(length=256), nullable=False)
+    name = Column(String(length=256), nullable=False)
 
     def get():
-        rows = db.session.query(Category).all()
+        with session_scope() as session:
+            rows = session.query(Category).all()
 
-        result = [row_to_dict(row) for row in rows]
+            result = [row_to_dict(row) for row in rows]
 
-        return result
-
+            return result

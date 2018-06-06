@@ -1,22 +1,22 @@
 import secrets
 from datetime import datetime
 
-from app.database import db
-from app.models import row_to_dict, session_scope
+from app.models import Base, row_to_dict, session_scope
+from sqlalchemy import Column, DateTime, Integer, String
 
 
-class ProvisionalUser(db.Model):
+class ProvisionalUser(Base):
     __tablename__ = 'provisional_user'
 
-    provisional_user_id = db.Column(
-        db.Integer,
+    provisional_user_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    email = db.Column(db.String(length=256), nullable=False)
-    login_token = db.Column(db.String(length=256), nullable=False)
-    create_at = db.Column(db.DateTime(), nullable=False)
+    email = Column(String(length=256), nullable=False)
+    login_token = Column(String(length=256), nullable=False)
+    create_at = Column(DateTime, nullable=False)
 
     @classmethod
     def get(cls, email):

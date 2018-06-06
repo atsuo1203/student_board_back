@@ -1,21 +1,21 @@
-from app.database import db
-from app.models import row_to_dict, session_scope
+from sqlalchemy import Column, Integer, String
+from app.models import Base, row_to_dict, session_scope
 
 
-class User(db.Model):
+class User(Base):
     __tablename__ = 'user'
 
-    user_id = db.Column(
-        db.Integer,
+    user_id = Column(
+        Integer,
         primary_key=True,
         nullable=False,
         autoincrement=True
     )
-    email = db.Column(db.String(length=256), nullable=False)
-    password = db.Column(db.String(length=256), nullable=False)
-    nick_name = db.Column(db.String(length=256), nullable=True)
-    profile = db.Column(db.String(length=256), nullable=True)
-    twitter_name = db.Column(db.String(length=256), nullable=True)
+    email = Column(String(length=256), nullable=False)
+    password = Column(String(length=256), nullable=False)
+    nick_name = Column(String(length=256), nullable=True)
+    profile = Column(String(length=256), nullable=True)
+    twitter_name = Column(String(length=256), nullable=True)
 
     @classmethod
     def get(cls, user_id):

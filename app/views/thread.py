@@ -83,6 +83,7 @@ def post_comment(thread_id):
 @app.route('/thread', methods=['DELETE'])
 def delete():
     '''threadを削除
+    同時に，thread_idに紐づくcommentテーブルも削除する
     Args:
         thread_id:  スレッドID
     Returns:

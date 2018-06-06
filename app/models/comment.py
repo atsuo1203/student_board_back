@@ -67,6 +67,14 @@ class Comment(db.Model):
 
             return
 
+    @classmethod
+    def delete(cls, thread_id):
+        comment_table = cls.__table__
+        comment_table.name = 'comment' + str(thread_id)
+        comment_table.drop(engine)
+
+        return
+
 
 def create_db(thread_id):
     '''コメントテーブルを動的に作成する

@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
-from .category import Category
+from app.models.category import Category
 from app.config import Config
 from app.database import db
 from app.models import row_to_dict, session_scope
@@ -94,10 +94,18 @@ class Thread(db.Model):
 
     @classmethod
     def delete(cls, params):
+        from app.models.comment import Comment
+
         with session_scope() as session:
-            rows = session.query(cls).filter_by(thread_id=params['thread_id'])
+            thread_id = params['thread_id']
+
+            rows = session.query(cls).filter_by(thread_id=thread_id)
+
             for row in rows:
                 session.delete(row)
+
+            # thread_idに紐づくcommentテーブルの削除
+            Comment.delete(hread_id)
 
     @classmethod
     def add_comment_count(cls, session, thread_id):

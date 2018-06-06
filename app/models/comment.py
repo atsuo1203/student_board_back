@@ -72,10 +72,6 @@ def create_db(thread_id):
     '''コメントテーブルを動的に作成する
     テーブル名は，comment + thread_id
     '''
-    engine = create_engine(
-        Config.SQLALCHEMY_DATABASE_URI,
-    )
-
     comment_table = Comment.__table__
     comment_table.name = 'comment' + str(thread_id)
     comment_table.create(engine)

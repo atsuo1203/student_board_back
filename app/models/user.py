@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+
 from app.models import Base, row_to_dict, session_scope
 
 

@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from app.config import Config
-from app.models import Base, session_scope
 from sqlalchemy import (
     Column, DateTime, ForeignKey, Integer, String, create_engine
 )
 from sqlalchemy.ext.declarative import declarative_base
 
+from app.config import Config
+from app.models import Base, session_scope
 from app.models.thread import Thread
 from app.models.user import User
 

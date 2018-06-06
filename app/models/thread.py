@@ -2,9 +2,9 @@ from datetime import datetime
 from sqlalchemy import create_engine, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.models.category import Category
 from app.config import Config
 from app.models import Base, row_to_dict, session_scope
+from app.models.category import Category
 
 
 engine = create_engine(

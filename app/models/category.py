@@ -1,6 +1,7 @@
-from app.models import Base, row_to_dict, session_scope
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+
+from app.models import Base, row_to_dict, session_scope
 
 
 class Category(Base):

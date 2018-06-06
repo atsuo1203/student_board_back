@@ -1,8 +1,8 @@
 import secrets
 from datetime import datetime
+from sqlalchemy import Column, DateTime, Integer, String
 
 from app.models import Base, row_to_dict, session_scope
-from sqlalchemy import Column, DateTime, Integer, String
 
 
 class ProvisionalUser(Base):

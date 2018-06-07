@@ -1,7 +1,7 @@
 import time
 import jwt
 
-from app.config import ALGORITHM, SECRET_KEY, LOGIN_EXPIRE_TIME
+from app.config import current_config
 
 
 def check_and_decode_webtoken(token):
@@ -19,23 +19,31 @@ def check_and_decode_webtoken(token):
 
 
 def generate_token(user_id, email):
+    login_expire_time = current_config('login_expire_time')
+
     token_data = {
         'user_id': user_id,
         'email': email,
-        'expire': time.time() + LOGIN_EXPIRE_TIME
+        'expire': time.time() + login_expire_time
     }
+
+    secret_key = current_config('secret_key')
+    algorithm = current_config('algorithm')
 
     token = _jwt_encode(
         token_data,
-        secret=SECRET_KEY,
-        algorithm=ALGORITHM
+        secret=secret_key,
+        algorithm=algorithm
     )
 
     return token.decode()
 
 
 def decode_token(token):
-    token_data = _jwt_decode(token, secret=SECRET_KEY)
+    secret_key = current_config('secret_key')
+
+    token_data = _jwt_decode(token, secret=secret_key)
+
     if token_data is None:
         raise Exception('invalid token')
     else:

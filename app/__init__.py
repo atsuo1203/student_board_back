@@ -1,20 +1,27 @@
-from app.config import Config
-from app.database import init_db
 from flask import Flask
-from .views import get_blueprints
+
+from app.views import get_blueprints
+from app.config import current_config
 
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
+def init_server(env):
+    server = Flask(__name__)
 
-    init_db(app)
-
+    # blueprintの設定
     blueprints = get_blueprints()
     for blueprint in blueprints:
-        app.register_blueprint(blueprint)
+        server.register_blueprint(blueprint)
 
-    return app
+    return server
 
 
-app = create_app()
+def run(env):
+    server = init_server(env=env)
+
+    config = current_config('server')
+
+    server.run(
+        host=config.get('host'),
+        port=config.get('port'),
+        debug=config.get('debug')
+    )

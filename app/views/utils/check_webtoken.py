@@ -44,7 +44,7 @@ def check_webtoken(func=None, extra_token=False):
             return func(*args, **kwargs)
 
         except Exception as e:
-            print("\n*** Error", e)
+            print(e)
             return make_response('', 403)
 
     return wrapper

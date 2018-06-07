@@ -2,17 +2,9 @@ from datetime import datetime
 from sqlalchemy import create_engine, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.config import Config
+from app.config import create_dburl
 from app.models import Base, row_to_dict, session_scope
 from app.models.category import Category
-
-
-engine = create_engine(
-    Config.SQLALCHEMY_DATABASE_URI,
-    echo=False,
-    encoding='utf-8'
-)
-base = declarative_base(engine)
 
 
 class Thread(Base):
@@ -60,10 +52,15 @@ class Thread(Base):
 
             # thread_idに紐づくcomment情報取得
             # テーブル名を指定する
+            dburl = create_dburl()
+            engine = create_engine(dburl)
+            base = declarative_base(engine)
+
             management_dic = {
                 '__tablename__': 'comment' + str(thread_id),
                 '__table_args__': {'autoload': True}}
             management_object = type('management_object', (base,), management_dic)
+
             comment_rows = session.query(management_object).all()
             comment_list = [row_to_dict(row) for row in comment_rows]
 

@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from app.config import Config
+from app.config import create_dburl
 
 
 Base = declarative_base()
@@ -22,9 +22,8 @@ def row_to_dict(row):
 
 @contextmanager
 def session_scope():
-    engine = create_engine(
-        Config.SQLALCHEMY_DATABASE_URI,
-    )
+    dburl = create_dburl()
+    engine = create_engine(dburl)
     Session = sessionmaker(bind=engine)
 
     session = Session()

@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 from flask import Blueprint, jsonify, make_response, request
 
-from app.config import EXPIRE_TIME, FROM_ADDRESS, FROM_ADDRESS_PASS
+from app.config import current_config
 from app.models.provisional_user import ProvisionalUser
 from app.models.user import User
 from app.views.utils import parse_params
@@ -70,10 +70,12 @@ def register_prov_user():
         # TODO 仮登録を連続で登録できないようにinterva_timeを設定する
         login_token = ProvisionalUser.post(email)
 
+        mail = current_config('mail')
+
         # 確認メール送信
         send_confirm_mail(
-            from_addr=FROM_ADDRESS,
-            from_addr_pass=FROM_ADDRESS_PASS,
+            from_addr=mail.get('address'),
+            from_addr_pass=mail.get('pass'),
             to_addr=email,
             login_token=login_token
         )
@@ -125,8 +127,10 @@ def register():
         # 仮登録作成時間と現在時間の差分を取得
         delta = datetime.now() - prov_user['create_at']
 
+        prov_expire_time = current_config('prov_expire_time')
+
         # 有効時間切れの場合，400を返却
-        if delta.total_seconds() > EXPIRE_TIME:
+        if delta.total_seconds() > prov_expire_time:
             result = {
                 'error_message': '有効期限切れです'
             }
@@ -146,5 +150,6 @@ def register():
         )
 
         return jsonify(result)
-    except:
+    except Exception as e:
+        print(e)
         return make_response('', 500)

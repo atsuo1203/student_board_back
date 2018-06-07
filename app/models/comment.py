@@ -5,18 +5,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.config import Config
+from app.config import create_dburl
 from app.models import Base, session_scope
 from app.models.thread import Thread
 from app.models.user import User
-
-
-engine = create_engine(
-    Config.SQLALCHEMY_DATABASE_URI,
-    echo=False,
-    encoding='utf-8'
-)
-base = declarative_base(engine)
 
 
 class Comment(Base):
@@ -51,6 +43,10 @@ class Comment(Base):
         with session_scope() as session:
             # thread_idに紐づくcommentテーブルにcomment投稿
             # テーブル名を指定する
+            dburl = create_dburl()
+            engine = create_engine(dburl)
+            base = declarative_base(engine)
+
             comment_table_dic = {
                 '__tablename__': 'comment' + str(thread_id),
                 '__table_args__': {'autoload': True}}
@@ -71,6 +67,9 @@ class Comment(Base):
 
     @classmethod
     def delete(cls, thread_id):
+        dburl = create_dburl()
+        engine = create_engine(dburl)
+
         comment_table = cls.__table__
         comment_table.name = 'comment' + str(thread_id)
         comment_table.drop(engine)
@@ -82,6 +81,9 @@ def create_db(thread_id):
     '''コメントテーブルを動的に作成する
     テーブル名は，comment + thread_id
     '''
+    dburl = create_dburl()
+    engine = create_engine(dburl)
+
     comment_table = Comment.__table__
     comment_table.name = 'comment' + str(thread_id)
     comment_table.create(engine)

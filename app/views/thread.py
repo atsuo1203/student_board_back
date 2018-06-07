@@ -76,7 +76,7 @@ def post_comment(thread_id):
 
         return make_response(jsonify(result), 201)
     except Exception as e:
-        print("\nError:", e)
+        print(e)
         return make_response('', 500)
 
 

@@ -4,12 +4,20 @@ from sqlalchemy import create_engine
 from app.config import create_dburl, current_config
 from tests.utils import (
     create_database,
+    create_tables,
     drop_database,
-    create_tables
+    load_fixtures,
 )
 
 
+fixture_data_root = 'tests/resources/data'
+
+
 class AbstractTest(unittest.TestCase):
+    # 利用するテーブル
+    # 外部キー制約による読み込み順番に注意
+    tables = []
+
     @classmethod
     def setUpClass(cls):
         # データベースの作成
@@ -38,3 +46,9 @@ class AbstractTest(unittest.TestCase):
     @classmethod
     def create_tables(cls):
         create_tables()
+
+    @classmethod
+    def load_fixtures(cls):
+        '''テストデータを読み込む
+        '''
+        load_fixtures(fixture_data_root, cls.tables)

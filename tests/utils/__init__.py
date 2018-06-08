@@ -1,4 +1,6 @@
 from sqlalchemy import create_engine
+from sqlalchemy_seed import load_fixture_files as ss_load_fixture_files
+from sqlalchemy_seed import load_fixtures as ss_load_fixtures
 from sqlalchemy_utils import database_exists
 from sqlalchemy_utils import drop_database as _drop_database
 
@@ -46,3 +48,19 @@ def create_tables():
     with session_scope() as session:
         Base = getattr(db_modules, 'Base')
         Base.metadata.create_all(bind=session.bind)
+
+
+def load_fixtures(fixtures_root, tables):
+    '''テストデータ読み込み
+    '''
+    if not tables:
+        return
+
+    fixtures_data_path = ['%s.yaml' % table for table in tables]
+
+    # fixtures_dataを読み込み
+    fixtures_data = ss_load_fixture_files(fixtures_root, fixtures_data_path)
+
+    with session_scope() as session:
+        # fixtures_dataをテーブルに格納
+        ss_load_fixtures(session, fixtures_data)

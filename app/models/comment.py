@@ -6,9 +6,13 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.config import create_dburl
-from app.models import Base, session_scope
+from app.models import session_scope
 from app.models.thread import Thread
 from app.models.user import User
+
+
+# commentテーブルだけ独自のBaseを継承
+Base = declarative_base()
 
 
 class Comment(Base):

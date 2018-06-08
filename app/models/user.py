@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from app.models import Base, row_to_dict, session_scope
+from app.models import Base, session_scope
 
 
 class User(Base):

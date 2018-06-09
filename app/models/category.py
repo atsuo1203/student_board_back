@@ -17,7 +17,7 @@ class Category(Base):
     @classmethod
     def get(cls):
         with session_scope() as session:
-            rows = session.query(Category).all()
+            rows = session.query(cls).all()
 
             result = [row_to_dict(row) for row in rows]
 

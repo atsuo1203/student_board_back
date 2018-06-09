@@ -7,10 +7,11 @@ from tests.base import AbstractTest
 class CategoryTest(AbstractTest):
     tables = ['category']
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(cls):
+        super(CategoryTest, cls).setUpClass()
 
-        self.load_fixtures()
+        cls.load_fixtures()
 
     def test_get(self):
         category = Category()

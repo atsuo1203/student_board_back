@@ -4,7 +4,7 @@ from app.views import get_blueprints
 from app.config import current_config
 
 
-def init_server(env):
+def init_server():
     server = Flask(__name__)
 
     # blueprintの設定
@@ -16,7 +16,7 @@ def init_server(env):
 
 
 def run(env):
-    server = init_server(env=env)
+    server = init_server()
 
     config = current_config('server')
 

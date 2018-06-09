@@ -31,7 +31,7 @@ def session_scope():
     try:
         yield session
         session.commit()
-    except:
+    except: # NOQA
         session.rollback()
         raise
     finally:

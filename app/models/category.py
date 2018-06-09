@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 
 from app.models import Base, row_to_dict, session_scope
 
@@ -15,9 +14,10 @@ class Category(Base):
     )
     name = Column(String(length=256), nullable=False)
 
-    def get():
+    @classmethod
+    def get(cls):
         with session_scope() as session:
-            rows = session.query(Category).all()
+            rows = session.query(cls).all()
 
             result = [row_to_dict(row) for row in rows]
 

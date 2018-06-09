@@ -1,5 +1,7 @@
 from datetime import datetime
-from sqlalchemy import create_engine, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (
+    create_engine, Column, DateTime, ForeignKey, Integer, String
+)
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.config import create_dburl
@@ -59,7 +61,9 @@ class Thread(Base):
             management_dic = {
                 '__tablename__': 'comment' + str(thread_id),
                 '__table_args__': {'autoload': True}}
-            management_object = type('management_object', (base,), management_dic)
+            management_object = type(
+                'management_object', (base,), management_dic
+            )
 
             comment_rows = session.query(management_object).all()
             comment_list = [row_to_dict(row) for row in comment_rows]

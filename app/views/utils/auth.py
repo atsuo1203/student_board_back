@@ -13,9 +13,8 @@ def check_and_decode_webtoken(token):
             return None
 
         return d_token
-    except:
+    except: # NOQA
         raise Exception('failed decode token')
-
 
 
 def generate_token(user_id, email):

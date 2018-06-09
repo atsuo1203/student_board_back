@@ -1,7 +1,5 @@
 import unittest
-from sqlalchemy import create_engine
 
-from app.config import create_dburl, current_config
 from tests.utils import (
     create_database,
     create_tables,

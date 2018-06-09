@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from flask import Blueprint, jsonify, make_response, request
 

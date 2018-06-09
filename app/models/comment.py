@@ -38,7 +38,6 @@ class Comment(Base):
         nullable=False,
     )
 
-
     @classmethod
     def post(cls, thread_id, params):
         comment_table = cls.__table__

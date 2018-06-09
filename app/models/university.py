@@ -22,7 +22,6 @@ class University(Base):
 
             return [row_to_dict(row) for row in rows]
 
-
     @classmethod
     def get(cls, university_id):
         with session_scope() as session:

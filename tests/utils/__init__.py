@@ -50,6 +50,18 @@ def create_tables():
         Base.metadata.create_all(bind=session.bind)
 
 
+def clear_tables():
+    '''全テーブル初期化
+    '''
+
+    db_modules = __import__(models_path, fromlist=[''])
+
+    with session_scope() as session:
+        Base = getattr(db_modules, 'Base')
+        for table in reversed(Base.metadata.sorted_tables):
+            session.execute(table.delete())
+
+
 def load_fixtures(fixtures_root, tables):
     '''テストデータ読み込み
     '''

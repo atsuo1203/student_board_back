@@ -31,6 +31,9 @@ class User(Base):
                 cls.user_id == user_id
             ).first()
 
+            if not rows:
+                return None
+
             return rows._asdict()
 
     @classmethod

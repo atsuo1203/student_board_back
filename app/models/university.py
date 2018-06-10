@@ -29,4 +29,7 @@ class University(Base):
                 cls.university_id == university_id
             ).first()
 
+            if not rows:
+                return None
+
             return row_to_dict(rows)

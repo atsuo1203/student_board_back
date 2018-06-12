@@ -30,7 +30,20 @@ class Thread(Base):
     )
 
     @classmethod
-    def all(cls, category_id):
+    def get_all(cls):
+        '''すべてのthread情報取得
+        '''
+        with session_scope() as session:
+            rows = session.query(cls).all()
+
+            result = [row_to_dict(row) for row in rows]
+
+            return result
+
+    @classmethod
+    def get_all_by_category_id(cls, category_id):
+        '''category_idに紐づくthread情報のリスト取得
+        '''
         with session_scope() as session:
             rows = session.query(
                 cls
@@ -94,7 +107,7 @@ class Thread(Base):
 
     @classmethod
     def delete(cls, params):
-        from app.models.comment import Comment
+        from app.models.comment import drop_comment_table
 
         with session_scope() as session:
             thread_id = params['thread_id']
@@ -105,7 +118,7 @@ class Thread(Base):
                 session.delete(row)
 
             # thread_idに紐づくcommentテーブルの削除
-            Comment.delete(thread_id)
+            drop_comment_table(thread_id)
 
     @classmethod
     def add_comment_count(cls, session, thread_id):

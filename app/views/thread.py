@@ -9,7 +9,7 @@ app = Blueprint('thread', __name__)
 
 
 @app.route('/threads/<category_id>', methods=['GET'])
-def get_all(category_id):
+def get_all_by_category_id(category_id):
     '''category_idに紐づけられたthreadリストの取得
     Args:
         category_id:    カテゴリID
@@ -17,7 +17,7 @@ def get_all(category_id):
         list(dict):
             threads情報(dict)のリスト
     '''
-    result = Thread.all(category_id)
+    result = Thread.get_all_by_category_id(category_id)
 
     return jsonify(result)
 

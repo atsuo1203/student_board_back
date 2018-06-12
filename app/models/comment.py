@@ -69,9 +69,7 @@ class Comment(Base):
             return
 
 
-
-
-def create_db(thread_id):
+def create_comment_table(thread_id):
     '''コメントテーブルを動的に作成する
     テーブル名は，comment + thread_id
     '''
@@ -81,3 +79,15 @@ def create_db(thread_id):
     comment_table = Comment.__table__
     comment_table.name = 'comment' + str(thread_id)
     comment_table.create(engine)
+
+
+def drop_comment_table(thread_id):
+    '''コメントテーブルを動的に削除する
+    テーブル名は，comment + thread_id
+    '''
+    dburl = create_dburl()
+    engine = create_engine(dburl)
+
+    comment_table = Comment.__table__
+    comment_table.name = 'comment' + str(thread_id)
+    comment_table.drop(engine)

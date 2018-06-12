@@ -1,7 +1,7 @@
 import unittest
 
 from tests.utils import (
-    clear_tables,
+    drop_tables,
     create_database,
     create_tables,
     drop_database,
@@ -31,7 +31,7 @@ class AbstractTest(unittest.TestCase):
         cls.drop_database()
 
     def tearDown(self):
-        self.clear_tables()
+        self.drop_tables()
 
     @classmethod
     def create_database(cls):
@@ -47,14 +47,18 @@ class AbstractTest(unittest.TestCase):
 
     @classmethod
     def create_tables(cls):
+        '''テスト用テーブル作成
+        '''
         create_tables()
 
     @classmethod
-    def clear_tables(cls):
-        clear_tables()
+    def drop_tables(cls):
+        '''テスト用テーブル削除
+        '''
+        drop_tables()
 
     @classmethod
     def load_fixtures(cls):
-        '''テストデータを読み込む
+        '''テストデータ読み込み
         '''
         load_fixtures(fixture_data_root, cls.tables)

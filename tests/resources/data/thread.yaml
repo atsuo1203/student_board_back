@@ -1,0 +1,29 @@
+- model: app.models.thread.Thread
+  fields:
+    thread_id: 1
+    title: title1
+    create_at: 2018-01-01 00:00:00
+    update_at: 2018-01-01 00:00:00
+    speed: 0
+    comment_count: 0
+    category_id: 1
+
+- model: app.models.thread.Thread
+  fields:
+    thread_id: 2
+    title: title2
+    create_at: 2018-01-02 00:00:00
+    update_at: 2018-01-02 00:00:00
+    speed: 0
+    comment_count: 0
+    category_id: 1
+
+- model: app.models.thread.Thread
+  fields:
+    thread_id: 3
+    title: title3
+    create_at: 2018-01-03 00:00:00
+    update_at: 2018-01-03 00:00:00
+    speed: 120
+    comment_count: 3
+    category_id: 2

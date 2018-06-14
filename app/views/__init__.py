@@ -1,18 +1,20 @@
 from . import (
-    user,
-    thread,
-    category,
-    university,
     auth,
+    category,
+    comment,
+    thread,
+    university,
+    user,
 )
 
 
 blueprints = [
-    user.app,
-    thread.app,
-    category.app,
-    university.app,
     auth.app,
+    category.app,
+    comment.app,
+    thread.app,
+    university.app,
+    user.app,
 ]
 
 

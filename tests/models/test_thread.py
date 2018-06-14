@@ -8,22 +8,12 @@ from tests.base import AbstractTest
 
 
 class ThreadTest(AbstractTest):
-    tables = ['user', 'category', 'thread']
-    comment_tables = ['comment1', 'comment2']
-
-    def tearDown(self):
-        # 先にcommentテーブルを削除
-        self.drop_comment_tables()
-
-        super(ThreadTest, self).tearDown()
+    tables = ['user', 'category', 'thread', 'comment']
 
     def test_get_all(self):
-        '''すべてのthread情報取得
+        '''すべてのthread取得
         '''
         self.load_fixtures()
-
-        self.create_comment_tables()
-        self.load_comment_fixtures()
 
         thread = Thread()
 
@@ -60,17 +50,14 @@ class ThreadTest(AbstractTest):
 
         self.assertListEqual(expect, actual)
 
-    def test_get_all_by_category_id(self):
-        '''category_idに紐づくthread情報のリスト取得
+    def test_get_all_by_c_id(self):
+        '''category_idに紐づくthreadリスト取得
         '''
         self.load_fixtures()
 
-        self.create_comment_tables()
-        self.load_comment_fixtures()
-
         thread = Thread()
 
-        actual = thread.get_all_by_category_id(1)
+        actual = thread.get_all_by_c_id(1)
         expect = [
             {
                 'thread_id': 1,
@@ -95,12 +82,9 @@ class ThreadTest(AbstractTest):
         self.assertListEqual(expect, actual)
 
     def test_get(self):
-        '''thread_idに紐づくthread情報の取得
+        '''thread_idに紐づくthread取得
         '''
         self.load_fixtures()
-
-        self.create_comment_tables()
-        self.load_comment_fixtures()
 
         thread = Thread()
 
@@ -140,9 +124,6 @@ class ThreadTest(AbstractTest):
     @freeze_time('2018-01-03 00:00:00')
     def test_post(self):
         self.load_fixtures()
-
-        self.create_comment_tables()
-        self.load_comment_fixtures()
 
         thread = Thread()
 

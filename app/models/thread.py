@@ -1,10 +1,6 @@
 from datetime import datetime
-from sqlalchemy import (
-    create_engine, Column, DateTime, ForeignKey, Integer, String
-)
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
-from app.config import create_dburl
 from app.models import Base, row_to_dict, session_scope
 from app.models.category import Category
 
@@ -30,6 +26,28 @@ class Thread(Base):
     )
 
     @classmethod
+    def get(cls, thread_id):
+        '''threadとthread_idに紐づくcomment取得
+        '''
+        from app.models.comment import Comment
+
+        with session_scope() as session:
+            # thread取得
+            t_rows = session.query(cls).filter(
+                cls.thread_id == thread_id
+            ).first()
+
+            # thread_idに紐づくcommentリスト取得
+            comments = Comment.get_all_by_t_id(thread_id)
+
+            result = {
+                'thread': row_to_dict(t_rows),
+                'comments': comments,
+            }
+
+            return result
+
+    @classmethod
     def get_all(cls):
         '''すべてのthread情報取得
         '''
@@ -41,8 +59,8 @@ class Thread(Base):
             return result
 
     @classmethod
-    def get_all_by_category_id(cls, category_id):
-        '''category_idに紐づくthread情報のリスト取得
+    def get_all_by_c_id(cls, category_id):
+        '''category_idに紐づくthreadリスト取得
         '''
         with session_scope() as session:
             rows = session.query(
@@ -58,72 +76,21 @@ class Thread(Base):
             return result
 
     @classmethod
-    def get(cls, thread_id):
-        with session_scope() as session:
-            # thread情報取得
-            thread_rows = session.query(cls).filter(
-                cls.thread_id == thread_id
-            ).first()
-
-            # thread_idに紐づくcomment情報取得
-            # テーブル名を指定する
-            dburl = create_dburl()
-            engine = create_engine(dburl)
-            base = declarative_base(engine)
-
-            management_dic = {
-                '__tablename__': 'comment' + str(thread_id),
-                '__table_args__': {'autoload': True}}
-            management_object = type(
-                'management_object', (base,), management_dic
-            )
-
-            comment_rows = session.query(management_object).all()
-            comment_list = [row_to_dict(row) for row in comment_rows]
-
-            result = {
-                'thread': row_to_dict(thread_rows),
-                'comments': comment_list
-            }
-
-            return result
-
-    @classmethod
     def post(cls, params):
         with session_scope() as session:
             data = cls(**params)
             session.add(data)
             session.flush()
 
-            from .comment import create_comment_table
-
-            # コメントテーブルを動的に作成する
-            create_comment_table(data.thread_id)
-
             return row_to_dict(data)
 
     @classmethod
     def delete(cls, params):
-        from app.models.comment import drop_comment_table
-
         with session_scope() as session:
             thread_id = params['thread_id']
 
-            rows = session.query(cls).filter_by(thread_id=thread_id)
+            row = session.query(cls).filter_by(thread_id=thread_id).first()
 
-            for row in rows:
-                session.delete(row)
+            session.delete(row)
 
-            # thread_idに紐づくcommentテーブルの削除
-            drop_comment_table(thread_id)
-
-    @classmethod
-    def add_comment_count(cls, session, thread_id):
-        data = cls(
-            thread_id=thread_id,
-            comment_count=(cls.comment_count + 1)
-        )
-
-        session.merge(data)
-
-        return
+            # *** TODO thread_idに紐づくcomment削除

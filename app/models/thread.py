@@ -91,17 +91,14 @@ class Thread(Base):
     @classmethod
     def post(cls, params):
         with session_scope() as session:
-            data = cls(
-                title=params['title'],
-                category_id=int(params['category_id'])
-            )
+            data = cls(**params)
             session.add(data)
             session.flush()
 
-            from .comment import create_db
+            from .comment import create_comment_table
 
             # コメントテーブルを動的に作成する
-            create_db(data.thread_id)
+            create_comment_table(data.thread_id)
 
             return row_to_dict(data)
 

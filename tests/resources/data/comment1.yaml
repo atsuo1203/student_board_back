@@ -1,0 +1,13 @@
+- comment_id: 1
+  name: test_comment_1_1
+  text: test_text_1_1
+  create_at: 2018-01-01 00:00:00
+  thread_id: 1
+  user_id: 1
+
+- comment_id: 2
+  name: test_comment_1_2
+  text: test_text_1_2
+  create_at: 2018-01-01 00:00:10
+  thread_id: 1
+  user_id: 1

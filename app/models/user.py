@@ -20,10 +20,16 @@ class User(Base):
 
     @classmethod
     def get(cls, user_id):
+        '''user_idに紐づく必要最低限のuser情報を取得
+        Args:
+            user_id:    ユーザID
+        Returns:
+            nick_name:      ニックネーム
+            profile:        プロファイル
+            twitter_name:   ツイッターネーム
+        '''
         with session_scope() as session:
             rows = session.query(
-                cls.user_id,
-                cls.email,
                 cls.nick_name,
                 cls.profile,
                 cls.twitter_name
@@ -37,7 +43,27 @@ class User(Base):
             return rows._asdict()
 
     @classmethod
-    def all(cls):
+    def get_email(cls, user_id):
+        '''user_idに紐づくemail取得
+        Args:
+            user_id:    ユーザID
+        Returns:
+            email:      学番メール
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.email,
+            ).filter(
+                cls.user_id == user_id
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+    @classmethod
+    def get_all(cls):
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,

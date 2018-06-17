@@ -8,7 +8,7 @@ class UserTest(AbstractTest):
     tables = ['user']
 
     def test_get(self):
-        '''user_idからuser情報取得
+        '''user_idに紐づく必要最低限のuser情報を取得
         '''
         self.load_fixtures()
 
@@ -16,11 +16,18 @@ class UserTest(AbstractTest):
 
         actual = user.get(1)
         expect = {
-            'user_id': 1,
-            'email': 'test1@test_gmail.com',
             'nick_name': None,
             'profile': None,
             'twitter_name': None,
+        }
+
+        self.assertDictEqual(expect, actual)
+
+        actual = user.get(2)
+        expect = {
+            'nick_name': 'sakura',
+            'profile': 'profile_sakura',
+            'twitter_name': 'tw_sakura',
         }
 
         self.assertDictEqual(expect, actual)
@@ -41,9 +48,7 @@ class UserTest(AbstractTest):
         '''
         self.load_fixtures()
 
-        user = User()
-
-        actual = user.all()
+        actual = User.get_all()
         expect = [
             {
                 'user_id': 1,

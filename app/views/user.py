@@ -14,7 +14,7 @@ def get_all():
         list(dict):
             user_id, email, nick_name, profile, twitter_name
     '''
-    result = User.all()
+    result = User.get_all()
 
     return jsonify(result)
 
@@ -24,7 +24,7 @@ def get(user_id):
     '''user_idに紐づくuser情報取得
     Returns:
         dict:
-            user_id, email, nick_name, profile, twitter_name
+            nick_name, profile, twitter_name
     '''
     result = User.get(user_id)
 

@@ -63,7 +63,27 @@ class User(Base):
             return rows._asdict()
 
     @classmethod
-    def get_all(cls):
+    def get_user_all(cls, user_id):
+        '''user_idに紐づくuser情報(password以外)の取得
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.user_id,
+                cls.email,
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.user_id == user_id
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+    @classmethod
+    def get_users_all(cls):
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,

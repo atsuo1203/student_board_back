@@ -173,6 +173,8 @@ class User(Base):
 
     @classmethod
     def put(cls, user_id, params):
+        '''userの基本情報(password以外)を更新
+        '''
         with session_scope() as session:
             data = cls(
                 user_id=user_id,

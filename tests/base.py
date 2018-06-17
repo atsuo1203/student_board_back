@@ -6,6 +6,7 @@ from tests.utils import (
     create_tables,
     drop_database,
     load_fixtures,
+    load_test_data,
 )
 
 
@@ -16,6 +17,9 @@ class AbstractTest(unittest.TestCase):
     # 外部キー制約による読み込み順番に注意
     tables = []
 
+    test_data = {}
+    test_tables = []
+
     @classmethod
     def setUpClass(cls):
         # データベースの作成
@@ -23,6 +27,9 @@ class AbstractTest(unittest.TestCase):
 
         # テーブルの作成
         cls.create_tables()
+
+        # テストデータの読み込み
+        cls.load_test_data()
 
     @classmethod
     def tearDownClass(cls):
@@ -61,3 +68,38 @@ class AbstractTest(unittest.TestCase):
         '''テストデータ読み込み
         '''
         load_fixtures(fixture_data_root, cls.tables)
+
+    @classmethod
+    def load_test_data(cls):
+        cls.test_data = load_test_data(fixture_data_root, cls.test_tables)
+
+    @classmethod
+    def get_test_data(cls, table):
+        return cls.test_data.get(table)
+
+    @classmethod
+    def filter_test_data(
+        cls, table, field=None, target=None, paging=None, reverse=False
+    ):
+        test_data = cls.test_data.get(table)
+
+        if field and target:
+            if type(target) is int:
+                test_data = [r for r in test_data if r.get(field) == target]
+            elif type(target) is list:
+                test_data = [
+                    r for t in target for r in test_data if r.get(field) == t
+                ]
+            else:
+                raise Exception('invalid test_data target type')
+
+        if reverse:
+            test_data = list(reversed(test_data))
+
+        if paging:
+            offset = (paging - 1) * 10
+            limit = paging * 10
+
+            test_data = test_data[offset:limit]
+
+        return test_data

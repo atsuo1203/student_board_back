@@ -16,10 +16,10 @@ class SortTest(AbstractTest):
         expect = [
             {'sort_id': 1, 'name': 'ID昇順'},
             {'sort_id': 2, 'name': 'ID降順'},
-            {'sort_id': 3, 'name': '人気昇順'},
-            {'sort_id': 4, 'name': '人気降順'},
-            {'sort_id': 5, 'name': 'コメント数昇順'},
-            {'sort_id': 6, 'name': 'コメント数降順'},
+            {'sort_id': 3, 'name': '人気高い順'},
+            {'sort_id': 4, 'name': '人気低い順'},
+            {'sort_id': 5, 'name': 'コメント数多い順'},
+            {'sort_id': 6, 'name': 'コメント数少ない順'},
         ]
 
         self.assertEqual(expect, actual)

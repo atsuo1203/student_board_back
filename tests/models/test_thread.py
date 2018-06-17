@@ -20,12 +20,6 @@ class ThreadTest(AbstractTest):
     tables = ['user', 'category', 'thread', 'comment']
     test_tables = ['thread', 'comment']
 
-    # @classmethod
-    # def setUpClass(cls):
-    #     super(ThreadTest, cls).setUpClass()
-
-    #     cls.get_fixtures('thread')
-
     def test_get_all(self):
         '''すべてのthread取得
         '''
@@ -234,6 +228,64 @@ class ThreadTest(AbstractTest):
         expect = test_data
 
         self.assertListEqual(expect, actual)
+
+    def test_get_paging_0(self):
+        '''paging番号が0またはそれ以下の場合，強制的に1のpagingを返却
+        '''
+        self.load_fixtures()
+
+        thread = Thread()
+
+        test_data = self.filter_test_data(
+            table='thread',
+            field='thread_id',
+            target=[1, 2, 5, 6, 7, 8, 9, 10, 11, 12]
+        )
+
+        # paging = 0
+        actual = thread.get_all_by_c_id(
+            category_id=1, sort_id=ID_ASC, paging=0
+        )
+        expect = test_data
+
+        self.assertListEqual(expect, actual)
+
+        # paging = -1
+        actual = thread.get_all_by_c_id(
+            category_id=1, sort_id=ID_ASC, paging=0
+        )
+
+        self.assertListEqual(expect, actual)
+
+    def test_get_paging_outside(self):
+        '''paging番号による取得できるthread数が0の場合，最後のpagingを表示する
+        '''
+        self.load_fixtures()
+
+        thread = Thread()
+
+        test_data = self.filter_test_data(
+            table='thread', field='thread_id', target=[23]
+        )
+
+        actual = thread.get_all_by_c_id(
+            category_id=1, sort_id=ID_ASC, paging=100
+        )
+        expect = test_data
+
+        self.assertListEqual(expect, actual)
+
+    def test_get_by_c_id_no_thread(self):
+        '''category_idに紐づくthreadが存在しない場合
+        '''
+        self.load_fixtures()
+
+        thread = Thread()
+
+        actual = thread.get_all_by_c_id(
+            category_id=100, sort_id=ID_ASC, paging=1)
+
+        self.assertListEqual([], actual)
 
     def test_get(self):
         '''thread_idに紐づくthread取得

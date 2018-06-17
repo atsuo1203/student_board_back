@@ -99,12 +99,43 @@ class Thread(Base):
             # ex)
             # 1. offset=0, limit=10
             # 2. offset=10, limit=20
+
+            # pagingバリデーション
+            if paging <= 0:
+                paging = 1
+
             offset = (paging - 1) * 10
             limit = 10
 
-            query = query.offset(offset).limit(limit)
+            query_range = query.offset(offset).limit(limit)
 
-            rows = query.all()
+            rows = query_range.all()
+
+            # threadが取得できなかった場合
+            # 1. threadが1つ以上取得できる場合，最後のpagingのthreadリストを返却
+            # 2. threadが0の場合，[]を返却
+            if not rows:
+                # category_idに紐づくすべてのthread取得
+                rows = query.all()
+
+                # それでもthreadが取得できない場合
+                if not rows:
+                    return []
+
+                result = []
+
+                count = len(rows)
+
+                # threadリストを逆順にしてpaging区切りのthreadをまとめて返却
+                for row in list(reversed(rows)):
+                    if count == 0 or count % 10 == 0:
+                        break
+
+                    result.append(row_to_dict(row))
+
+                    count = count - 1
+
+                return result
 
             result = [row_to_dict(row) for row in rows]
 

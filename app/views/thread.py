@@ -7,18 +7,40 @@ from app.views.utils import parse_params
 app = Blueprint('thread', __name__)
 
 
-@app.route('/threads/<category_id>', methods=['GET'])
-def get_all_by_category_id(category_id):
+@app.route('/threads', methods=['GET'])
+def get_all_by_c_id():
     '''category_idに紐づけられたthreadリストの取得
     Args:
         category_id:    カテゴリID
+        sort_id:        ソートID
+        paging:         ページング番号
     Returns:
-        list(dict):
-            threads情報(dict)のリスト
-    '''
-    result = Thread.get_all_by_category_id(category_id)
+        200:
+            list(dict):
+                threads情報(dict)のリスト
+        400: パラメータ不正
 
-    return jsonify(result)
+    ページング番号 1の時は1~10，2の時11~20のthreadを取得
+    '''
+    try:
+        params = parse_params(request.form)
+
+        category_id = int(params.get('category_id'))
+        sort_id = int(params.get('sort_id'))
+        paging = int(params.get('paging'))
+
+        if not category_id or not sort_id or not paging:
+            return make_response('', 400)
+
+        result = Thread.get_all_by_c_id(
+            category_id,
+            sort_id,
+            paging
+        )
+
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)
 
 
 @app.route('/thread/<thread_id>', methods=['GET'])
@@ -64,6 +86,8 @@ def delete():
     '''
     params = parse_params(request.form)
 
-    Thread.delete(params)
+    thread_id = params.get('thread_id')
+
+    Thread.delete(thread_id)
 
     return make_response('', 200)

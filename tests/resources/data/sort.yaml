@@ -11,19 +11,19 @@
 - model: app.models.sort.Sort
   fields:
     sort_id: 3
-    name: 人気昇順
+    name: 人気高い順
 
 - model: app.models.sort.Sort
   fields:
     sort_id: 4
-    name: 人気降順
+    name: 人気低い順
 
 - model: app.models.sort.Sort
   fields:
     sort_id: 5
-    name: コメント数昇順
+    name: コメント数多い順
 
 - model: app.models.sort.Sort
   fields:
     sort_id: 6
-    name: コメント数降順
+    name: コメント数少ない順

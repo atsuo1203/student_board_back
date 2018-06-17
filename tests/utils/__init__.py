@@ -80,32 +80,26 @@ def load_fixtures(fixtures_root, tables):
             ss_load_fixtures(session, fixture_data)
 
 
-def load_comment_fixtures(fixtures_root, tables):
-    '''commentテストデータ読み込み
+def load_test_data(fixtures_root, tables):
+    '''テストデータ取得
     '''
+    if not tables:
+        return
+
     root_path = __file__[:__file__.rfind('tests')]
 
-    for table_name in tables:
-        path = '%s/%s/%s.yaml' % (root_path, fixtures_root, table_name)
+    result = {}
+
+    for table in tables:
+        path = '%s/%s/%s.yaml' % (root_path, fixtures_root, table)
 
         with open(path, 'r') as f:
             data_list = yaml.load(f)
 
-            with session_scope() as session:
-                for data in data_list:
-                    dburl = create_dburl()
-                    engine = create_engine(dburl)
-                    base = declarative_base(engine)
+            test_data = [data.get('fields') for data in data_list]
 
-                    comment_table_dic = {
-                        '__tablename__': table_name,
-                        '__table_args__': {'autoload': True}
-                    }
-                    comment_table = type(
-                        'comment_table', (base,), comment_table_dic
-                    )
+            result.update({
+                table: test_data
+            })
 
-                    data = comment_table(
-                        **data
-                    )
-                    session.add(data)
+    return result

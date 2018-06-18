@@ -1,50 +1,81 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, make_response, request
 
 from app.models.user import User
-from app.views.utils import parse_params
+from app.views.utils.check_webtoken import check_webtoken
 
 
 app = Blueprint('user', __name__)
 
 
 @app.route('/user', methods=['GET'])
-def get_all():
-    '''すべてのuser情報取得
-    Returns:
-        list(dict):
-            user_id, email, nick_name, profile, twitter_name
-    '''
-    result = User.all()
-
-    return jsonify(result)
-
-
-@app.route('/user/<user_id>', methods=['GET'])
-def get(user_id):
+@check_webtoken(extra_token=True)
+def get(token_data):
     '''user_idに紐づくuser情報取得
     Returns:
         dict:
-            user_id, email, nick_name, profile, twitter_name
+            nick_name, profile, twitter_name
     '''
-    result = User.get(user_id)
+    try:
+        user_id = token_data.get('user_id')
 
-    return jsonify(result)
+        result = User.get(user_id)
+
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)
 
 
-@app.route('/user/<user_id>', methods=['PUT'])
-def put(user_id):
-    '''user情報を更新
-    引数の内容を変更する（必須ではない）
-
+@app.route('/user', methods=['PUT'])
+@check_webtoken(extra_token=True)
+def put(token_data):
+    '''user情報(emailとpassword以外)を更新
     Args:
         dict:
-            email, nick_name, profile, twitter_name
+            nick_name, profile, twitter_name
     Returns:
         dict:
-            user_id, email, nick_name, profile, twitter_name
+            nick_name, profile, twitter_name
     '''
-    params = parse_params(request.form)
+    try:
+        params = request.json
 
-    result = User.put(user_id, params)
+        user_id = token_data.get('user_id')
+        data = {
+            'nick_name': params.get('nick_name'),
+            'profile': params.get('profile'),
+            'twitter_name': params.get('twitter_name'),
+        }
 
-    return jsonify(result)
+        User.put(user_id, data)
+
+        return make_response('', 200)
+    except Exception as e:
+        return make_response('', 500)
+
+
+@app.route('/user/password', methods=['PUT'])
+@check_webtoken(extra_token=True)
+def put_password(token_data):
+    '''userのpasswordを更新
+    Args:
+        dict:
+            password, new_password
+    Returns:
+        200:    正常更新
+        500:    サーバエラー
+    '''
+    try:
+        params = request.json
+
+        user_id = token_data.get('user_id')
+        password = params.get('password')
+        new_password = params.get('new_password')
+
+        result = User.put_password(user_id, password, new_password)
+
+        return jsonify(result)
+    except Exception as e:
+        if str(e == 'invalid password'):
+            return make_response('', 400)
+
+        return make_response('', 500)

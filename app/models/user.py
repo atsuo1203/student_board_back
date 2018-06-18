@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from app.models import Base, session_scope
+from app.models import Base, row_to_dict, session_scope
 
 
 class User(Base):
@@ -20,6 +20,52 @@ class User(Base):
 
     @classmethod
     def get(cls, user_id):
+        '''user_idに紐づく必要最低限のuser情報を取得
+        Args:
+            user_id:    ユーザID
+        Returns:
+            nick_name:      ニックネーム
+            profile:        プロファイル
+            twitter_name:   ツイッターネーム
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.user_id == user_id
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+    @classmethod
+    def get_email(cls, user_id):
+        '''user_idに紐づくemail取得
+        Args:
+            user_id:    ユーザID
+        Returns:
+            email:      学番メール
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.email,
+            ).filter(
+                cls.user_id == user_id
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+    @classmethod
+    def get_user_all(cls, user_id):
+        '''user_idに紐づくuser情報(password以外)の取得
+        '''
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,
@@ -37,7 +83,9 @@ class User(Base):
             return rows._asdict()
 
     @classmethod
-    def all(cls):
+    def get_users_all(cls):
+        '''すべてのuser取得
+        '''
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,
@@ -50,6 +98,15 @@ class User(Base):
             result = [row._asdict() for row in rows]
 
             return result
+
+    @classmethod
+    def get_user_secret(cls, user_id):
+        '''user_idに紐づくuser情報(すべて)取得
+        '''
+        with session_scope() as session:
+            row = session.query(cls).filter(cls.user_id == user_id).first()
+
+            return row_to_dict(row)
 
     @classmethod
     def login(cls, email, password):
@@ -127,6 +184,8 @@ class User(Base):
 
     @classmethod
     def put(cls, user_id, params):
+        '''userの基本情報(password以外)を更新
+        '''
         with session_scope() as session:
             data = cls(
                 user_id=user_id,
@@ -137,7 +196,21 @@ class User(Base):
             session.merge(data)
             session.commit()
 
-            # commit後の更新されたuser情報取得
-            user = cls.get(user_id)
+    @classmethod
+    def put_password(cls, user_id, password, new_password):
+        '''userのpassword更新
+        '''
+        with session_scope() as session:
+            user = cls.get_user_secret(1)
 
-            return user
+            if user.get('password') != password:
+                raise Exception('invalid password')
+
+            data = cls(
+                user_id=user_id,
+                password=new_password
+            )
+
+            # mergeして1回commit
+            session.merge(data)
+            session.commit()

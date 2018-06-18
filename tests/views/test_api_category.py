@@ -20,9 +20,11 @@ class CategoryAPITest(AbstractTest):
     def test_get(self):
         '''GET /category 200 OK
         '''
-        user = User.get(user_id=1)
+        user_id = 1
+
+        email = User.get_email(user_id=user_id)
         token = generate_token(
-            user_id=user.get('user_id'), email=user.get('email')
+            user_id=user_id, email=email
         )
 
         response = self.client.get(

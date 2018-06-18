@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from app.models import Base, session_scope
+from app.models import Base, row_to_dict, session_scope
 
 
 class User(Base):
@@ -84,6 +84,8 @@ class User(Base):
 
     @classmethod
     def get_users_all(cls):
+        '''すべてのuser取得
+        '''
         with session_scope() as session:
             rows = session.query(
                 cls.user_id,
@@ -96,6 +98,15 @@ class User(Base):
             result = [row._asdict() for row in rows]
 
             return result
+
+    @classmethod
+    def get_user_secret(cls, user_id):
+        '''user_idに紐づくuser情報(すべて)取得
+        '''
+        with session_scope() as session:
+            row = session.query(cls).filter(cls.user_id == user_id).first()
+
+            return row_to_dict(row)
 
     @classmethod
     def login(cls, email, password):
@@ -185,7 +196,21 @@ class User(Base):
             session.merge(data)
             session.commit()
 
-            # commit後の更新されたuser情報取得
-            user = cls.get(user_id)
+    @classmethod
+    def put_password(cls, user_id, password, new_password):
+        '''userのpassword更新
+        '''
+        with session_scope() as session:
+            user = cls.get_user_secret(1)
 
-            return user
+            if user.get('password') != password:
+                raise Exception('invalid password')
+
+            data = cls(
+                user_id=user_id,
+                password=new_password
+            )
+
+            # mergeして1回commit
+            session.merge(data)
+            session.commit()

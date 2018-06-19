@@ -75,7 +75,7 @@ def put_password(token_data):
 
         return jsonify(result)
     except Exception as e:
-        if str(e == 'invalid password'):
+        if str(e) == 'invalid password':
             return make_response('', 400)
 
         return make_response('', 500)

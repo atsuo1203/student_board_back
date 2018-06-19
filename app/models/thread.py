@@ -142,9 +142,19 @@ class Thread(Base):
             return result
 
     @classmethod
-    def post(cls, params):
+    def post(cls, title, category_id, params=None):
         with session_scope() as session:
-            data = cls(**params)
+            if not params:
+                data = cls(
+                    title=title,
+                    category_id=category_id,
+                )
+            else:
+                data = cls(
+                    title=title,
+                    category_id=category_id,
+                    **params
+                )
             session.add(data)
             session.flush()
 
@@ -156,20 +166,21 @@ class Thread(Base):
 
         with session_scope() as session:
             # thread_idに紐づくcomment削除
-            rows = session.query(
+            c_rows = session.query(
                 Comment
             ).filter(
                 cls.thread_id == thread_id
             ).all()
 
-            if not rows:
-                return
-
             # thread_idに紐づくcommentの削除
-            for row in rows:
-                session.delete(row)
+            if c_rows:
+                for row in c_rows:
+                    session.delete(row)
 
             # threadの削除
-            row = session.query(cls).filter_by(thread_id=thread_id).first()
+            t_row = session.query(cls).filter_by(thread_id=thread_id).first()
 
-            session.delete(row)
+            if not t_row:
+                raise Exception('thread not found')
+
+            session.delete(t_row)

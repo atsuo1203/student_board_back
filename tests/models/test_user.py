@@ -17,7 +17,7 @@ class UserTest(AbstractTest):
 
         actual = user.get(1)
         expect = {
-            'nick_name': None,
+            'nick_name': 'cosmos',
             'profile': None,
             'twitter_name': None,
         }
@@ -53,7 +53,7 @@ class UserTest(AbstractTest):
         expect = {
             'user_id': 1,
             'email': 'test1@test_gmail.com',
-            'nick_name': None,
+            'nick_name': 'cosmos',
             'profile': None,
             'twitter_name': None,
         }
@@ -70,7 +70,7 @@ class UserTest(AbstractTest):
             {
                 'user_id': 1,
                 'email': 'test1@test_gmail.com',
-                'nick_name': None,
+                'nick_name': 'cosmos',
                 'profile': None,
                 'twitter_name': None,
             },
@@ -120,7 +120,7 @@ class UserTest(AbstractTest):
         expect = {
             'user_id': 1,
             'email': 'test1@test_gmail.com',
-            'nick_name': None,
+            'nick_name': 'cosmos',
             'profile': None,
             'twitter_name': None,
         }

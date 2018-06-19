@@ -57,17 +57,19 @@ class Comment(Base):
         with session_scope() as session:
             data = cls(**params)
             session.add(data)
+            session.flush()
 
             # thread_idに紐づくthreadのcomment_count加算
+            cls.add_comment_count(
+                session=session,
+                thread_id=params.get('thread_id')
+            )
 
-            return
+    @classmethod
+    def add_comment_count(cls, session, thread_id):
+        data = Thread(
+            thread_id=thread_id,
+            comment_count=(Thread.comment_count + 1)
+        )
 
-    # def add_comment_count(cls, session, thread_id):
-    #     data = cls(
-    #         thread_id=thread_id,
-    #         comment_count=(cls.comment_count + 1)
-    #     )
-
-    #     session.merge(data)
-
-    #     return
+        session.merge(data)

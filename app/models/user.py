@@ -12,9 +12,9 @@ class User(Base):
         nullable=False,
         autoincrement=True
     )
-    email = Column(String(length=256), nullable=False)
+    email = Column(String(length=256), nullable=False, unique=True)
     password = Column(String(length=256), nullable=False)
-    nick_name = Column(String(length=256), nullable=True)
+    nick_name = Column(String(length=256), nullable=True, unique=True)
     profile = Column(String(length=256), nullable=True)
     twitter_name = Column(String(length=256), nullable=True)
 

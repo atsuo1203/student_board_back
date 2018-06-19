@@ -1,7 +1,6 @@
 import yaml
 
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_seed import load_fixture_files as ss_load_fixture_files
 from sqlalchemy_seed import load_fixtures as ss_load_fixtures
 from sqlalchemy_utils import database_exists

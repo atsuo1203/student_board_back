@@ -141,45 +141,73 @@ class UserTest(AbstractTest):
 
         self.assertEqual(None, actual)
 
-    def test_is_exist(self):
-        '''すでにuserが登録されている場合
+    def test_exist_by_email(self):
+        '''すでに同じemailが登録されている場合
         '''
         self.load_fixtures()
 
         user = User()
 
-        actual = user.is_exist('test1@test_gmail.com')
+        actual = user.is_exist_by_email('test1@test_gmail.com')
 
         self.assertEqual(True, actual)
 
-    def test_is_exist_no_user(self):
-        '''userが登録されていない場合
+    def test_not_exist_by_email(self):
+        '''同じemailが登録されていない場合
         '''
         self.load_fixtures()
 
         user = User()
 
-        # input(">3")
-        actual = user.is_exist('test100@test_gmail.com')
-        # input(">4")
+        actual = user.is_exist_by_email('test100@test_gmail.com')
 
         self.assertEqual(False, actual)
 
     def test_post(self):
         '''user登録
-        登録されたuserのuser_idとemailが返却
         '''
         self.load_fixtures()
 
-        user = User()
-
-        actual = user.post('test4@test_gmail.com', 'test_pass4')
-        expect = {
-            'user_id': 4,
+        data = {
             'email': 'test4@test_gmail.com',
+            'password': 'test_pass4',
+            'nick_name': 'iris',
         }
 
-        self.assertDictEqual(expect, actual)
+        User.post(data)
+
+        actual = User.get_by_email(email=data.get('email'))
+        expect = {
+            'nick_name': data.get('nick_name'),
+            'profile': None,
+            'twitter_name': None,
+        }
+
+        self.assertEqual(expect, actual)
+
+    def test_post_options(self):
+        '''user登録 (profileとtwitter_nameあり)
+        '''
+        self.load_fixtures()
+
+        data = {
+            'email': 'test4@test_gmail.com',
+            'password': 'test_pass4',
+            'nick_name': 'iris',
+            'profile': 'profile_iris',
+            'twitter_name': 'tw_iris',
+        }
+
+        User.post(data)
+
+        actual = User.get_by_email(email=data.get('email'))
+        expect = {
+            'nick_name': data.get('nick_name'),
+            'profile': data.get('profile'),
+            'twitter_name': data.get('twitter_name'),
+        }
+
+        self.assertEqual(expect, actual)
 
     def test_put(self):
         '''user更新

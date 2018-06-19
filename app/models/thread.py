@@ -142,9 +142,19 @@ class Thread(Base):
             return result
 
     @classmethod
-    def post(cls, params):
+    def post(cls, title, category_id, params=None):
         with session_scope() as session:
-            data = cls(**params)
+            if not params:
+                data = cls(
+                    title=title,
+                    category_id=category_id,
+                )
+            else:
+                data = cls(
+                    title=title,
+                    category_id=category_id,
+                    **params
+                )
             session.add(data)
             session.flush()
 

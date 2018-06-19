@@ -43,6 +43,30 @@ class User(Base):
             return rows._asdict()
 
     @classmethod
+    def get_by_email(cls, email):
+        '''emailに紐づく必要最低限のuser情報を取得
+        Args:
+            email:    学番メール
+        Returns:
+            nick_name:      ニックネーム
+            profile:        プロファイル
+            twitter_name:   ツイッターネーム
+        '''
+        with session_scope() as session:
+            rows = session.query(
+                cls.nick_name,
+                cls.profile,
+                cls.twitter_name
+            ).filter(
+                cls.email == email
+            ).first()
+
+            if not rows:
+                return None
+
+            return rows._asdict()
+
+    @classmethod
     def get_email(cls, user_id):
         '''user_idに紐づくemail取得
         Args:
@@ -137,10 +161,10 @@ class User(Base):
             return rows._asdict()
 
     @classmethod
-    def is_exist(cls, email):
+    def is_exist_by_email(cls, email):
         '''同じ学番メールのユーザが存在するかどうかをboolで返却
         Args:
-            email:      学番メール
+            email:  学番メール
         Returns:
             bool:
         '''
@@ -157,30 +181,43 @@ class User(Base):
                 return False
 
     @classmethod
-    def post(cls, email, password):
+    def is_exist_by_nick_name(cls, nick_name):
+        '''同じニックネームのユーザが存在するかどうかをboolで返却
+        Args:
+            nike_name:  ニックネーム
+        Returns:
+            bool:
+        '''
+        with session_scope() as session:
+            count = session.query(
+                cls
+            ).filter(
+                cls.nick_name == nick_name
+            ).count()
+
+            if count > 0:
+                return True
+            else:
+                return False
+
+    @classmethod
+    def post(cls, params):
         '''user登録
         Args:
-            email:      学番メール
-            password:   パスワード
-        Returns:
-            dict: user情報
-                user_id:    ユーザID
-                email:      学番メール
+            params:
+                * email:        学番メール
+                * password:     パスワード
+                * nick_name:    ニックネーム
+                profile:        プロファイル
+                twitter_name:   ツイッターネーム
+
+        * 必須
         '''
         with session_scope() as session:
             data = cls(
-                email=email,
-                password=password
+                **params
             )
             session.add(data)
-            session.flush()
-
-            result = {
-                'user_id': data.user_id,
-                'email': data.email,
-            }
-
-            return result
 
     @classmethod
     def put(cls, user_id, params):

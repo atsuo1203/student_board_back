@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 
 from app.models.category import Category
 from app.views.utils.check_webtoken import check_webtoken
@@ -12,9 +12,14 @@ app = Blueprint('category', __name__)
 def get():
     '''すべてのcategory取得
     Returns:
-        list(dict):
-            category情報のリスト
+        200:
+            list(dict):
+                category情報のリスト
+        500: サーバエラー
     '''
-    result = Category.get()
+    try:
+        result = Category.get()
 
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)

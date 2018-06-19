@@ -156,20 +156,21 @@ class Thread(Base):
 
         with session_scope() as session:
             # thread_idに紐づくcomment削除
-            rows = session.query(
+            c_rows = session.query(
                 Comment
             ).filter(
                 cls.thread_id == thread_id
             ).all()
 
-            if not rows:
-                return
-
             # thread_idに紐づくcommentの削除
-            for row in rows:
-                session.delete(row)
+            if c_rows:
+                for row in c_rows:
+                    session.delete(row)
 
             # threadの削除
-            row = session.query(cls).filter_by(thread_id=thread_id).first()
+            t_row = session.query(cls).filter_by(thread_id=thread_id).first()
 
-            session.delete(row)
+            if not t_row:
+                raise Exception('thread not found')
+
+            session.delete(t_row)

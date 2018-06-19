@@ -314,14 +314,14 @@ class ThreadTest(AbstractTest):
 
         thread = Thread()
 
-        data = {
-            'title': 'title24',
-            'category_id': 1,
-            'create_at': datetime.datetime.now(),
-            'update_at': datetime.datetime.now(),
-        }
-
-        actual = thread.post(data)
+        actual = thread.post(
+            title='title24',
+            category_id=1,
+            params={
+                'create_at': datetime.datetime.now(),
+                'update_at': datetime.datetime.now(),
+            }
+        )
         expect = {
             'thread_id': 24,
             'title': 'title24',
@@ -354,11 +354,13 @@ class ThreadTest(AbstractTest):
 
         thread = Thread()
 
-        thread.delete(100)
+        with self.assertRaises(Exception) as e:
+            thread.delete(100)
 
-        actual = thread.get(100)
-
-        self.assertEqual(None, actual)
+        self.assertEqual(
+            'thread not found',
+            str(e.exception)
+        )
 
 
 if __name__ == '__main__':

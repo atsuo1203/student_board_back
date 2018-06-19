@@ -33,7 +33,6 @@ def create_database():
 
 def drop_database():
     '''データベース削除
-        envのDBを対象とする
     '''
     dburl = create_dburl()
 
@@ -42,7 +41,7 @@ def drop_database():
 
 
 def create_tables():
-    '''全テーブル作成（commentテーブル以外を作成）
+    '''全テーブル作成
     '''
     db_modules = __import__(models_path, fromlist=[''])
 

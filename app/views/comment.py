@@ -19,17 +19,18 @@ def post_comment(token_data):
         200:    正常終了
         500:    サーバエラー
     '''
-    params = request.json
-
-    user_id = token_data.get('user_id')
-    user = User.get(user_id=user_id)
-
-    params.update({
-        'user_id': user_id,
-        'name': user.get('nick_name')
-    })
-
     try:
+        params = request.json
+
+        user_id = token_data.get('user_id')
+        user = User.get(user_id=user_id)
+
+        params.update({
+            'user_id': user_id,
+            'name': user.get('nick_name')
+        })
+
+        # comment作成
         Comment.post(params)
 
         return make_response('', 201)

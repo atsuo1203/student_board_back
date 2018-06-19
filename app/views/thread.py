@@ -1,13 +1,16 @@
 from flask import Blueprint, jsonify, make_response, request
 
+from app.models.comment import Comment
 from app.models.thread import Thread
-from app.views.utils import parse_params
+from app.models.user import User
+from app.views.utils.check_webtoken import check_webtoken
 
 
 app = Blueprint('thread', __name__)
 
 
 @app.route('/threads', methods=['GET'])
+@check_webtoken
 def get_all_by_c_id():
     '''category_idに紐づけられたthreadリストの取得
     Args:
@@ -19,11 +22,12 @@ def get_all_by_c_id():
             list(dict):
                 threads情報(dict)のリスト
         400: パラメータ不正
+        500: サーバエラー
 
     ページング番号 1の時は1~10，2の時11~20のthreadを取得
     '''
     try:
-        params = parse_params(request.form)
+        params = request.json
 
         category_id = int(params.get('category_id'))
         sort_id = int(params.get('sort_id'))
@@ -44,50 +48,85 @@ def get_all_by_c_id():
 
 
 @app.route('/thread/<thread_id>', methods=['GET'])
+@check_webtoken
 def get(thread_id):
     '''thread_idからthread情報取得
     Args:
         thread_id:  スレッドID
     Returns:
-        dict:
-            thread: thread情報
-            comments: list(dict) comment情報のリスト
+        200:
+            dict:
+                thread: thread情報
+                comments: list(dict) comment情報のリスト
+        400: threadが存在しない場合
+        500: サーバエラnー
     '''
-    result = Thread.get(thread_id)
+    try:
+        result = Thread.get(thread_id)
 
-    return jsonify(result)
+        if not result:
+            return make_response('', 400)
+
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)
 
 
 @app.route('/thread', methods=['POST'])
-def post():
+@check_webtoken(extra_token=True)
+def post(token_data):
     '''threadを作成
     Args:
         title:          スレッドタイトル
         category_id:    カテゴリID
+        comment_text:        1コメ
     Returns:
         dict:
             作成されたthread情報
     '''
-    params = parse_params(request.form)
+    params = request.json
 
-    result = Thread.post(params)
+    new_thread = Thread.post(
+        title=params.get('title'),
+        category_id=params.get('category_id')
+    )
+
+    user_id = token_data.get('user_id')
+
+    user = User.get(user_id)
+
+    data = {
+        'name': user.get('nick_name'),
+        'thread_id': new_thread.get('thread_id'),
+        'text': params.get('comment_text'),
+        'user_id': user_id,
+    }
+
+    Comment.post(data)
+
+    result = Thread.get(new_thread.get('thread_id'))
 
     return jsonify(result)
 
 
-@app.route('/thread', methods=['DELETE'])
-def delete():
+@app.route('/thread/<thread_id>', methods=['DELETE'])
+@check_webtoken
+def delete(thread_id):
     '''threadを削除
     同時に，thread_idに紐づくcommentテーブルも削除する
     Args:
         thread_id:  スレッドID
     Returns:
         200:    正常削除
+        400:    threadが存在しない
+        500:    サーバエラー
     '''
-    params = parse_params(request.form)
+    try:
+        Thread.delete(thread_id)
 
-    thread_id = params.get('thread_id')
+        return make_response('', 200)
+    except Exception as e:
+        if str(e) == 'thread not found':
+            return make_response('', 400)
 
-    Thread.delete(thread_id)
-
-    return make_response('', 200)
+        return make_response('', 500)

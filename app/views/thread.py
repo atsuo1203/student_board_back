@@ -84,29 +84,38 @@ def post(token_data):
         dict:
             作成されたthread情報
     '''
-    params = request.json
+    try:
+        params = request.json
 
-    new_thread = Thread.post(
-        title=params.get('title'),
-        category_id=params.get('category_id')
-    )
+        new_thread = Thread.post(
+            title=params.get('title'),
+            category_id=params.get('category_id')
+        )
 
-    user_id = token_data.get('user_id')
+        user_id = token_data.get('user_id')
 
-    user = User.get(user_id)
+        user = User.get(user_id)
 
-    data = {
-        'name': user.get('nick_name'),
-        'thread_id': new_thread.get('thread_id'),
-        'text': params.get('comment_text'),
-        'user_id': user_id,
-    }
+        data = {
+            'name': user.get('nick_name'),
+            'thread_id': new_thread.get('thread_id'),
+            'text': params.get('comment_text'),
+            'user_id': user_id,
+        }
 
-    Comment.post(data)
+        Comment.post(data)
 
-    result = Thread.get(new_thread.get('thread_id'))
+        result = Thread.get(new_thread.get('thread_id'))
 
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as e:
+        if str(e) == 'over title length':
+            result = {
+                'error_message': 'タイトルが長すぎます'
+            }
+            return make_response(jsonify(result), 400)
+
+        return make_response('', 500)
 
 
 @app.route('/thread/<thread_id>', methods=['DELETE'])

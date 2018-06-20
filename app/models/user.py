@@ -213,6 +213,8 @@ class User(Base):
 
         * 必須
         '''
+        cls._check_length(params)
+
         with session_scope() as session:
             data = cls(
                 **params
@@ -223,6 +225,8 @@ class User(Base):
     def put(cls, user_id, params):
         '''userの基本情報(password以外)を更新
         '''
+        cls._check_length(params)
+
         with session_scope() as session:
             data = cls(
                 user_id=user_id,
@@ -251,3 +255,28 @@ class User(Base):
             # mergeして1回commit
             session.merge(data)
             session.commit()
+
+    @classmethod
+    def _check_length(cls, params):
+        # length_check
+        nick_name = params.get('nick_name')
+        if nick_name:
+            if len(nick_name) > 20:
+                raise Exception('over length')
+
+        email = params.get('email')
+        if email:
+            if len(email) > 50:
+                raise Exception('over length')
+
+        profile = params.get('profile')
+        if profile:
+            if len(profile) > 200:
+                raise Exception('over length')
+
+        twitter_name = params.get('twitter_name')
+        if twitter_name:
+            if len(twitter_name) > 15:
+                raise Exception('over length')
+
+        return

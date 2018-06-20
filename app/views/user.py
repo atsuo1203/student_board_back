@@ -50,6 +50,9 @@ def put(token_data):
 
         return make_response('', 200)
     except Exception as e:
+        if str(e) == 'over length':
+            return make_response('', 400)
+
         return make_response('', 500)
 
 

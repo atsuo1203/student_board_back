@@ -83,6 +83,12 @@ def register_prov_user():
         return make_response('', 200)
     except Exception as e:
         print(e)
+        if str(e) == 'over email length':
+            result = {
+                'error_message': 'メールが長すぎます'
+            }
+            return make_response(jsonify(result), 400)
+
         return make_response('', 500)
 
 

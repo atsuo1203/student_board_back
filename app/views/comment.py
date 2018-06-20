@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, request
+from flask import Blueprint, jsonify, make_response, request
 
 from app.models.comment import Comment
 from app.models.user import User
@@ -35,4 +35,10 @@ def post_comment(token_data):
 
         return make_response('', 201)
     except Exception as e:
+        if str(e) == 'over text length':
+            result = {
+                'error_message': 'テキストが長すぎます'
+            }
+            return make_response(jsonify(result), 400)
+
         return make_response('', 500)

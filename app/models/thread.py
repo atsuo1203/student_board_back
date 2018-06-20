@@ -143,6 +143,10 @@ class Thread(Base):
 
     @classmethod
     def post(cls, title, category_id, params=None):
+        # length_check
+        if len(title) > 40:
+            raise Exception('over title length')
+
         with session_scope() as session:
             if not params:
                 data = cls(

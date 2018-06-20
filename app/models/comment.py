@@ -54,6 +54,11 @@ class Comment(Base):
 
     @classmethod
     def post(cls, params):
+        # length_check
+        text = params.get('text')
+        if len(text) > 200:
+            raise Exception('over text length')
+
         with session_scope() as session:
             if not params.get('create_at'):
                 params.update({'create_at': datetime.now()})

@@ -47,6 +47,10 @@ class ProvisionalUser(Base):
         Returns:
             login_token:  ログイントークン
         '''
+        # length_check
+        if len(email) > 50:
+            raise Exception('over email length')
+
         with session_scope() as session:
             # 推測しにくい一時URLトークン生成
             login_token = secrets.token_urlsafe()

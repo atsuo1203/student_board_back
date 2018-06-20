@@ -57,21 +57,23 @@ class Comment(Base):
         with session_scope() as session:
             if not params.get('create_at'):
                 params.update({'create_at': datetime.now()})
+
             data = cls(**params)
             session.add(data)
             session.flush()
 
             # thread_idに紐づくthreadのcomment_count加算
-            cls.add_comment_count(
+            cls.update_thread(
                 session=session,
                 thread_id=params.get('thread_id')
             )
 
     @classmethod
-    def add_comment_count(cls, session, thread_id):
+    def update_thread(cls, session, thread_id):
         data = Thread(
             thread_id=thread_id,
-            comment_count=(Thread.comment_count + 1)
+            comment_count=(Thread.comment_count + 1),
+            update_at=datetime.now()
         )
 
         session.merge(data)

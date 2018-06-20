@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
 from app.config import current_config
@@ -166,6 +166,9 @@ class Thread(Base):
             session.add(data)
             session.flush()
 
+            # threadのspeed計算処理
+            cls._update_speed(session=session)
+
             return row_to_dict(data)
 
     @classmethod
@@ -192,3 +195,34 @@ class Thread(Base):
                 raise Exception('thread not found')
 
             session.delete(t_row)
+
+    @classmethod
+    def _update_speed(cls, session=None):
+        '''新しいthread投稿時，全てのthreadのspeedを計算する
+        '''
+        rows = session.query(
+            cls.thread_id,
+            cls.create_at,
+            cls.update_at,
+            cls.comment_count
+        ).all()
+
+        for r in rows:
+            # 更新時間と作成時間の差
+            latest_delta = r.update_at - r.create_at
+
+            if latest_delta != timedelta(0):
+                # 現在時刻と更新時間の差
+                current_delta = datetime.now() - r.update_at
+
+                # (コメント数 / 現在時刻秒数) * 100
+                speed = (
+                    r.comment_count / current_delta.total_seconds()
+                ) * 1000
+
+                data = cls(
+                    thread_id=r.thread_id,
+                    speed=speed
+                )
+
+                session.merge(data)

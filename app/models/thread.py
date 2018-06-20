@@ -148,8 +148,16 @@ class Thread(Base):
                 data = cls(
                     title=title,
                     category_id=category_id,
+                    create_at=datetime.now(),
+                    update_at=datetime.now(),
                 )
             else:
+                if not params.get('create_at'):
+                    params.update({'create_at': datetime.now()})
+
+                if not params.get('update_at'):
+                    params.update({'update_at': datetime.now()})
+
                 data = cls(
                     title=title,
                     category_id=category_id,

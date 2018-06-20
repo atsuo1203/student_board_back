@@ -24,7 +24,7 @@ class Comment(Base):
     name = Column(String(length=256), nullable=False)
     text = Column(String(length=256), nullable=False)
     create_at = Column(
-        DateTime, nullable=False, default=datetime.now()
+        DateTime, nullable=False
     )
     user_id = Column(
         Integer,
@@ -55,6 +55,8 @@ class Comment(Base):
     @classmethod
     def post(cls, params):
         with session_scope() as session:
+            if not params.get('create_at'):
+                params.update({'create_at': datetime.now()})
             data = cls(**params)
             session.add(data)
             session.flush()

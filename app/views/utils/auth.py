@@ -57,7 +57,6 @@ def _jwt_decode(encoded, secret):
     try:
         token = jwt.decode(encoded, secret)
     except jwt.exceptions.DecodeError as e:
-        print(e)
         token = None
 
     return token

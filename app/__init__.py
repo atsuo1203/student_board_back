@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 
 from app.views import get_blueprints
 from app.config import current_config
@@ -6,6 +7,7 @@ from app.config import current_config
 
 def init_server():
     server = Flask(__name__)
+    CORS(server)
 
     # blueprintの設定
     blueprints = get_blueprints()

@@ -34,7 +34,7 @@ def _create_message(
     to_addr,
     login_token
 ):
-    url = 'http://localhost:3000/?login_token=' + login_token
+    url = 'http://localhost:3000/register?login_token=' + login_token
 
     body = '以下のURLにアクセスしてください\n\n' + url
 

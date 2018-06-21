@@ -40,6 +40,23 @@ class ProvisionalUser(Base):
             return row_to_dict(rows)
 
     @classmethod
+    def get_by_login_token(cls, login_token):
+        '''仮登録ユーザをlogin_tokenから取得
+        '''
+        with session_scope() as session:
+            # prov_user = session.
+            row = session.query(
+                cls
+            ).filter(
+                cls.login_token == login_token
+            ).first()
+
+            if not row:
+                return None
+
+            return row_to_dict(row)
+
+    @classmethod
     def post(cls, email):
         '''ユーザ仮登録
         Args:

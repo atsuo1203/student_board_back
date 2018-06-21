@@ -95,7 +95,6 @@ def register_prov_user():
 def register():
     '''ユーザの本登録を行う
     Args:
-        * email:        学番メール
         * login_token:  仮登録のトークン
         * password:     パスワード
         * nick_name:    ニックネーム
@@ -112,9 +111,20 @@ def register():
     try:
         params = request.json
 
-        email = params.get('email')
         nick_name = params.get('nick_name')
         login_token = params.get('login_token')
+
+        # login_tokenからemailを取得する
+        prov_user = ProvisionalUser.get_by_login_token(login_token=login_token)
+
+        # 仮登録ユーザが存在しない場合，400を返却
+        if not prov_user:
+            result = {
+                'error_message': '仮登録を行なってください'
+            }
+            return make_response(jsonify(result), 400)
+
+        email = prov_user.get('email')
 
         # emailが既に本登録されているか
         if User.is_exist_by_email(email):
@@ -129,16 +139,6 @@ def register():
             # ユーザが登録されている場合，400を返す
             result = {
                 'error_message': 'このニックネームは既に使われています'
-            }
-            return make_response(jsonify(result), 400)
-
-        # 仮登録ユーザを学番メールから検索し，最新の仮登録ユーザを取得
-        prov_user = ProvisionalUser.get(email)
-
-        # 仮登録ユーザが存在しない場合，400を返却
-        if not prov_user:
-            result = {
-                'error_message': '仮登録を行なってください'
             }
             return make_response(jsonify(result), 400)
 
@@ -163,6 +163,11 @@ def register():
 
         # paramsからlogin_token除去
         del params['login_token']
+
+        # paramsにemail追加
+        params.update({
+            'email': email
+        })
 
         # ユーザ本登録
         User.post(params)

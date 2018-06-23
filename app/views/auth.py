@@ -12,7 +12,7 @@ app = Blueprint('auth', __name__)
 
 
 # TODO パラメータのバリデーション #5
-@app.route('/auth/login', methods=['GET'])
+@app.route('/auth/login', methods=['POST'])
 def login():
     '''ユーザの仮登録を行う
     Args:

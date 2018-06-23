@@ -9,7 +9,7 @@ from app.views.utils.check_webtoken import check_webtoken
 app = Blueprint('thread', __name__)
 
 
-@app.route('/threads', methods=['GET'])
+@app.route('/threads', methods=['POST'])
 @check_webtoken
 def get_all_by_c_id():
     '''category_idに紐づけられたthreadリストの取得
@@ -47,7 +47,7 @@ def get_all_by_c_id():
         return make_response('', 500)
 
 
-@app.route('/thread/<thread_id>', methods=['GET'])
+@app.route('/thread/<thread_id>', methods=['POST'])
 @check_webtoken
 def get(thread_id):
     '''thread_idからthread情報取得

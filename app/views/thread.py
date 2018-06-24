@@ -3,20 +3,22 @@ from flask import Blueprint, jsonify, make_response, request
 from app.models.comment import Comment
 from app.models.thread import Thread
 from app.models.user import User
+from app.views.utils import parse_params
 from app.views.utils.check_webtoken import check_webtoken
 
 
 app = Blueprint('thread', __name__)
 
 
-@app.route('/threads', methods=['POST'])
+@app.route('/threads', methods=['GET'])
 @check_webtoken
 def get_all_by_c_id():
     '''category_idに紐づけられたthreadリストの取得
     Args:
-        category_id:    カテゴリID
-        sort_id:        ソートID
-        paging:         ページング番号
+        QueryString:
+            category_id:    カテゴリID
+            sort_id:        ソートID
+            paging:         ページング番号
     Returns:
         200:
             list(dict):
@@ -27,7 +29,7 @@ def get_all_by_c_id():
     ページング番号 1の時は1~10，2の時11~20のthreadを取得
     '''
     try:
-        params = request.json
+        params = parse_params(request.args)
 
         category_id = int(params.get('category_id'))
         sort_id = int(params.get('sort_id'))
@@ -47,7 +49,7 @@ def get_all_by_c_id():
         return make_response('', 500)
 
 
-@app.route('/thread/<thread_id>', methods=['POST'])
+@app.route('/thread/<thread_id>', methods=['GET'])
 @check_webtoken
 def get(thread_id):
     '''thread_idからthread情報取得

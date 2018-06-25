@@ -25,6 +25,22 @@ def get(token_data):
         return make_response('', 500)
 
 
+@app.route('/user/<user_id>', methods=['GET'])
+@check_webtoken
+def get_by_user_id(user_id):
+    '''user_idに紐づくuser情報取得
+    Returns:
+        dict:
+            nick_name, profile, twitter_name
+    '''
+    try:
+        result = User.get(user_id)
+
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)
+
+
 @app.route('/user', methods=['PUT'])
 @check_webtoken(extra_token=True)
 def put(token_data):

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 import unittest
 
 from freezegun import freeze_time
@@ -14,6 +14,9 @@ SPEED_ASC = current_config().get('SPEED_ASC')
 SPEED_DESC = current_config().get('SPEED_DESC')
 NUM_COMMENT_ASC = current_config().get('NUM_COMMENT_ASC')
 NUM_COMMENT_DESC = current_config().get('NUM_COMMENT_DESC')
+
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 
 class ThreadTest(AbstractTest):
@@ -318,15 +321,15 @@ class ThreadTest(AbstractTest):
             title='title24',
             category_id=1,
             params={
-                'create_at': datetime.datetime.now(),
-                'update_at': datetime.datetime.now(),
+                'create_at': datetime.now(JST),
+                'update_at': datetime.now(JST),
             }
         )
         expect = {
             'thread_id': 24,
             'title': 'title24',
-            'create_at': datetime.datetime(2018, 1, 24, 0, 0),
-            'update_at': datetime.datetime(2018, 1, 24, 0, 0),
+            'create_at': datetime(2018, 1, 24, 0, 0),
+            'update_at': datetime(2018, 1, 24, 0, 0),
             'speed': 0,
             'comment_count': 0,
             'category_id': 1,

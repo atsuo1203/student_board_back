@@ -1,9 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from app.models import Base, session_scope, row_to_dict
 from app.models.thread import Thread
 from app.models.user import User
+
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 
 class Comment(Base):
@@ -61,7 +64,7 @@ class Comment(Base):
 
         with session_scope() as session:
             if not params.get('create_at'):
-                params.update({'create_at': datetime.now()})
+                params.update({'create_at': datetime.now(JST)})
 
             data = cls(**params)
             session.add(data)
@@ -78,7 +81,7 @@ class Comment(Base):
         data = Thread(
             thread_id=thread_id,
             comment_count=(Thread.comment_count + 1),
-            update_at=datetime.now()
+            update_at=datetime.now(JST)
         )
 
         session.merge(data)

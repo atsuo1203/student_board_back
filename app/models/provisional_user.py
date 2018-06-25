@@ -1,8 +1,11 @@
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import Column, DateTime, Integer, String
 
 from app.models import Base, row_to_dict, session_scope
+
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 
 class ProvisionalUser(Base):
@@ -75,7 +78,7 @@ class ProvisionalUser(Base):
             data = cls(
                 email=email,
                 login_token=login_token,
-                create_at=datetime.now()
+                create_at=datetime.now(JST)
             )
             session.add(data)
 

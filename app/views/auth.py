@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, jsonify, make_response, request
 
 from app.config import current_config
@@ -9,6 +9,8 @@ from app.views.utils.auth import generate_token
 
 
 app = Blueprint('auth', __name__)
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 
 # TODO パラメータのバリデーション #5
@@ -143,7 +145,7 @@ def register():
             return make_response(jsonify(result), 400)
 
         # 仮登録作成時間と現在時間の差分を取得
-        delta = datetime.now() - prov_user['create_at']
+        delta = datetime.now(JST) - prov_user['create_at']
 
         prov_expire_time = current_config('prov_expire_time')
 

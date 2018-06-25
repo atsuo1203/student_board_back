@@ -1,9 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
 from app.config import current_config
 from app.models import Base, row_to_dict, session_scope
 from app.models.category import Category
+
+
+JST = timezone(timedelta(hours=+9), 'JST')
 
 
 class Thread(Base):
@@ -16,8 +19,8 @@ class Thread(Base):
         autoincrement=True
     )
     title = Column(String(length=256), nullable=False)
-    create_at = Column(DateTime, nullable=False, default=datetime.now())
-    update_at = Column(DateTime, nullable=False, default=datetime.now())
+    create_at = Column(DateTime, nullable=False, default=datetime.now(JST))
+    update_at = Column(DateTime, nullable=False, default=datetime.now(JST))
     speed = Column(Integer, nullable=True, default=0)
     comment_count = Column(Integer, nullable=True, default=0)
     category_id = Column(
@@ -167,15 +170,15 @@ class Thread(Base):
                 data = cls(
                     title=title,
                     category_id=category_id,
-                    create_at=datetime.now(),
-                    update_at=datetime.now(),
+                    create_at=datetime.now(JST),
+                    update_at=datetime.now(JST),
                 )
             else:
                 if not params.get('create_at'):
-                    params.update({'create_at': datetime.now()})
+                    params.update({'create_at': datetime.now(JST)})
 
                 if not params.get('update_at'):
-                    params.update({'update_at': datetime.now()})
+                    params.update({'update_at': datetime.now(JST)})
 
                 data = cls(
                     title=title,
@@ -232,7 +235,7 @@ class Thread(Base):
 
             if latest_delta != timedelta(0):
                 # 現在時刻と更新時間の差
-                current_delta = datetime.now() - r.update_at
+                current_delta = datetime.now(JST) - r.update_at
 
                 # (コメント数 / 現在時刻秒数) * 100
                 speed = (

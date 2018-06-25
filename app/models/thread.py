@@ -142,6 +142,21 @@ class Thread(Base):
             return result
 
     @classmethod
+    def get_by_title(cls, title):
+        with session_scope() as session:
+            rows = session.query(
+                cls
+            ).join(
+                Category, cls.category_id == Category.category_id
+            ).filter(
+                cls.title.like(title + '%')
+            )
+
+            result = [row_to_dict(row) for row in rows]
+
+            return result
+
+    @classmethod
     def post(cls, title, category_id, params=None):
         # length_check
         if len(title) > 40:

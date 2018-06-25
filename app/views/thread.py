@@ -49,6 +49,25 @@ def get_all_by_c_id():
         return make_response('', 500)
 
 
+@app.route('/threads/<title>', methods=['GET'])
+@check_webtoken
+def get_by_title(title):
+    '''titleからthread情報取得
+    Args:
+        200:
+            list(dict):
+                threads情報(dict)のリスト
+        400: パラメータ不正
+        500: サーバエラー
+    '''
+    try:
+        result = Thread.get_by_title(title=title)
+
+        return jsonify(result)
+    except Exception as e:
+        return make_response('', 500)
+
+
 @app.route('/thread/<thread_id>', methods=['GET'])
 @check_webtoken
 def get(thread_id):

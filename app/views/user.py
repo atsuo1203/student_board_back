@@ -64,7 +64,9 @@ def put(token_data):
 
         User.put(user_id, data)
 
-        return make_response('', 200)
+        result = User.get(user_id=user_id)
+
+        return make_response(jsonify(result), 200)
     except Exception as e:
         if str(e) == 'over length':
             return make_response('', 400)

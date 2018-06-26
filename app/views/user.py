@@ -90,9 +90,9 @@ def put_password(token_data):
         password = params.get('password')
         new_password = params.get('new_password')
 
-        result = User.put_password(user_id, password, new_password)
+        User.put_password(user_id, password, new_password)
 
-        return jsonify(result)
+        return make_response('', 200)
     except Exception as e:
         if str(e) == 'invalid password':
             return make_response('', 400)

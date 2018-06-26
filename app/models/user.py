@@ -242,7 +242,7 @@ class User(Base):
         '''userのpassword更新
         '''
         with session_scope() as session:
-            user = cls.get_user_secret(1)
+            user = cls.get_user_secret(user_id)
 
             if user.get('password') != password:
                 raise Exception('invalid password')

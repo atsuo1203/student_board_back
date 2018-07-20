@@ -19,8 +19,16 @@ class Thread(Base):
         autoincrement=True
     )
     title = Column(String(length=256), nullable=False)
-    create_at = Column(DateTime, nullable=False, default=datetime.now(JST))
-    update_at = Column(DateTime, nullable=False, default=datetime.now(JST))
+    create_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S.%f')
+    )
+    update_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S.%f')
+    )
     speed = Column(Integer, nullable=True, default=0)
     comment_count = Column(Integer, nullable=True, default=0)
     category_id = Column(
@@ -170,15 +178,27 @@ class Thread(Base):
                 data = cls(
                     title=title,
                     category_id=category_id,
-                    create_at=datetime.now(JST),
-                    update_at=datetime.now(JST),
+                    create_at=datetime.now(JST).strftime(
+                        '%Y-%m-%d %H:%M:%S.%f'
+                    ),
+                    update_at=datetime.now(JST).strftime(
+                        '%Y-%m-%d %H:%M:%S.%f'
+                    ),
                 )
             else:
                 if not params.get('create_at'):
-                    params.update({'create_at': datetime.now(JST)})
+                    params.update({
+                        'create_at':
+                        datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S.%f')
+                        }
+                    )
 
                 if not params.get('update_at'):
-                    params.update({'update_at': datetime.now(JST)})
+                    params.update({
+                        'update_at':
+                            datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S.%f')
+                        }
+                    )
 
                 data = cls(
                     title=title,
@@ -235,7 +255,9 @@ class Thread(Base):
 
             if latest_delta != timedelta(0):
                 # 現在時刻と更新時間の差
-                current_delta = datetime.now(JST) - r.update_at
+                current_delta = datetime.now(JST).strftime(
+                    '%Y-%m-%d %H:%M:%S.%f'
+                ) - r.update_at
 
                 # (コメント数 / 現在時刻秒数) * 100
                 speed = (
